@@ -1,0 +1,325 @@
+NUTS3;Year;GDP;NUTS_ID;CNTR_CODE
+Delfzijl en omgeving;2018;2464.02;NL112;NL
+Oost-Groningen;2018;4247.68;NL114;NL
+Overig Groningen;2018;18979.18;NL115;NL
+Zuidoost-Friesland;2018;6424.12;NL126;NL
+Noord-Friesland;2018;10544.24;NL127;NL
+Zuidwest-Friesland;2018;4001.51;NL128;NL
+Noord-Drenthe;2018;5919.46;NL131;NL
+Zuidoost-Drenthe;2018;5099.24;NL132;NL
+Zuidwest-Drenthe;2018;4779.2;NL133;NL
+Noord-Overijssel;2018;15762.09;NL211;NL
+Zuidwest-Overijssel;2018;5703.49;NL212;NL
+Twente;2018;23193.3;NL213;NL
+Veluwe;2018;27899.77;NL221;NL
+Zuidwest-Gelderland;2018;9325.66;NL224;NL
+Achterhoek;2018;12959.02;NL225;NL
+Arnhem/Nijmegen;2018;29059.04;NL226;NL
+Flevoland;2018;14019.82;NL230;NL
+Flevoland;2018;14019.82;NL23;NL
+Kop van Noord-Holland;2018;11376.77;NL321;NL
+IJmond;2018;6843.74;NL323;NL
+Zaanstreek;2018;5253.66;NL325;NL
+Het Gooi en Vechtstreek;2018;10868.75;NL327;NL
+Alkmaar en omgeving;2018;8074.63;NL328;NL
+Agglomeratie Haarlem;2018;7258.89;NL32A;NL
+Groot-Amsterdam;2018;121326.45;NL32B;NL
+Zeeuwsch-Vlaanderen;2018;4333.85;NL341;NL
+Overig Zeeland;2018;9678.14;NL342;NL
+Utrecht;2018;73706.73;NL350;NL
+Utrecht;2018;73706.73;NL35;NL
+Agglomeratie â€™s-Gravenhage;2018;38843.49;NL361;NL
+Delft en Westland;2018;11813.17;NL362;NL
+Agglomeratie Leiden en Bollenstreek;2018;16155.97;NL363;NL
+Zuidoost-Zuid-Holland;2018;15418.56;NL364;NL
+Oost-Zuid-Holland;2018;11244.73;NL365;NL
+Groot-Rijnmond;2018;69026;NL366;NL
+West-Noord-Brabant;2018;28877.77;NL411;NL
+Zuidoost-Noord-Brabant;2018;40893.48;NL414;NL
+Midden-Noord-Brabant;2018;19014.99;NL415;NL
+Noordoost-Noord-Brabant;2018;29681.2;NL416;NL
+Noord-Limburg;2018;12064.95;NL421;NL
+Midden-Limburg;2018;8565.87;NL422;NL
+Zuid-Limburg;2018;24047.09;NL423;NL
+Delfzijl en omgeving;2019;2358.55;NL112;NL
+Oost-Groningen;2019;4423.13;NL114;NL
+Overig Groningen;2019;19321.75;NL115;NL
+Zuidoost-Friesland;2019;6926.43;NL126;NL
+Noord-Friesland;2019;11054.46;NL127;NL
+Zuidwest-Friesland;2019;4208.82;NL128;NL
+Noord-Drenthe;2019;6175.78;NL131;NL
+Zuidoost-Drenthe;2019;5214.18;NL132;NL
+Zuidwest-Drenthe;2019;5106.46;NL133;NL
+Noord-Overijssel;2019;16516.62;NL211;NL
+Zuidwest-Overijssel;2019;5867.21;NL212;NL
+Twente;2019;24625.69;NL213;NL
+Veluwe;2019;30036.23;NL221;NL
+Zuidwest-Gelderland;2019;9907.73;NL224;NL
+Achterhoek;2019;13714.85;NL225;NL
+Arnhem/Nijmegen;2019;30453.63;NL226;NL
+Flevoland;2019;15121.91;NL230;NL
+Flevoland;2019;15121.91;NL23;NL
+Kop van Noord-Holland;2019;11938.64;NL321;NL
+IJmond;2019;6884.92;NL323;NL
+Zaanstreek;2019;5574.36;NL325;NL
+Het Gooi en Vechtstreek;2019;11434.84;NL327;NL
+Alkmaar en omgeving;2019;8607.27;NL328;NL
+Agglomeratie Haarlem;2019;7753.38;NL32A;NL
+Groot-Amsterdam;2019;129690.23;NL32B;NL
+Zeeuwsch-Vlaanderen;2019;4232.38;NL341;NL
+Overig Zeeland;2019;10381.23;NL342;NL
+Utrecht;2019;77321.78;NL350;NL
+Utrecht;2019;77321.78;NL35;NL
+Agglomeratie â€™s-Gravenhage;2019;40825.89;NL361;NL
+Delft en Westland;2019;12470.49;NL362;NL
+Agglomeratie Leiden en Bollenstreek;2019;16770.2;NL363;NL
+Zuidoost-Zuid-Holland;2019;16408.9;NL364;NL
+Oost-Zuid-Holland;2019;11852.24;NL365;NL
+Groot-Rijnmond;2019;73014.22;NL366;NL
+West-Noord-Brabant;2019;30038.47;NL411;NL
+Zuidoost-Noord-Brabant;2019;43312.36;NL414;NL
+Midden-Noord-Brabant;2019;20148.7;NL415;NL
+Noordoost-Noord-Brabant;2019;31729.41;NL416;NL
+Noord-Limburg;2019;12361.66;NL421;NL
+Midden-Limburg;2019;8974.18;NL422;NL
+Zuid-Limburg;2019;24884.89;NL423;NL
+Delfzijl en omgeving;2020;1960.91;NL112;NL
+Oost-Groningen;2020;3907.2;NL114;NL
+Overig Groningen;2020;18420.62;NL115;NL
+Zuidoost-Friesland;2020;6983.49;NL126;NL
+Noord-Friesland;2020;11068.34;NL127;NL
+Zuidwest-Friesland;2020;4255.76;NL128;NL
+Noord-Drenthe;2020;6245.9;NL131;NL
+Zuidoost-Drenthe;2020;4985.47;NL132;NL
+Zuidwest-Drenthe;2020;5066.43;NL133;NL
+Noord-Overijssel;2020;16396.74;NL211;NL
+Zuidwest-Overijssel;2020;5766.91;NL212;NL
+Twente;2020;24708.12;NL213;NL
+Veluwe;2020;30069.13;NL221;NL
+Zuidwest-Gelderland;2020;10090.13;NL224;NL
+Achterhoek;2020;13630.79;NL225;NL
+Arnhem/Nijmegen;2020;30178.2;NL226;NL
+Flevoland;2020;15113.83;NL230;NL
+Flevoland;2020;15113.83;NL23;NL
+Kop van Noord-Holland;2020;12017.31;NL321;NL
+IJmond;2020;6564.09;NL323;NL
+Zaanstreek;2020;5516.18;NL325;NL
+Het Gooi en Vechtstreek;2020;11016.62;NL327;NL
+Alkmaar en omgeving;2020;8608.21;NL328;NL
+Agglomeratie Haarlem;2020;7734.57;NL32A;NL
+Groot-Amsterdam;2020;121104.07;NL32B;NL
+Zeeuwsch-Vlaanderen;2020;4238.89;NL341;NL
+Overig Zeeland;2020;10330.75;NL342;NL
+Utrecht;2020;79026.62;NL350;NL
+Utrecht;2020;79026.62;NL35;NL
+Agglomeratie â€™s-Gravenhage;2020;41117.23;NL361;NL
+Delft en Westland;2020;12679.56;NL362;NL
+Agglomeratie Leiden en Bollenstreek;2020;16517.05;NL363;NL
+Zuidoost-Zuid-Holland;2020;16286.56;NL364;NL
+Oost-Zuid-Holland;2020;11820.54;NL365;NL
+Groot-Rijnmond;2020;71492.19;NL366;NL
+West-Noord-Brabant;2020;29611.51;NL411;NL
+Zuidoost-Noord-Brabant;2020;43712.29;NL414;NL
+Midden-Noord-Brabant;2020;19999.24;NL415;NL
+Noordoost-Noord-Brabant;2020;31660.12;NL416;NL
+Noord-Limburg;2020;12024.05;NL421;NL
+Midden-Limburg;2020;9377.28;NL422;NL
+Zuid-Limburg;2020;23889.57;NL423;NL
+Delfzijl en omgeving;2021;1969.51;NL112;NL
+Oost-Groningen;2021;4808.35;NL114;NL
+Overig Groningen;2021;20606.11;NL115;NL
+Zuidoost-Friesland;2021;7485.04;NL126;NL
+Noord-Friesland;2021;12177.41;NL127;NL
+Zuidwest-Friesland;2021;4656.33;NL128;NL
+Noord-Drenthe;2021;6826.29;NL131;NL
+Zuidoost-Drenthe;2021;5520.04;NL132;NL
+Zuidwest-Drenthe;2021;5467.11;NL133;NL
+Noord-Overijssel;2021;17865.23;NL211;NL
+Zuidwest-Overijssel;2021;6301.53;NL212;NL
+Twente;2021;26970.7;NL213;NL
+Veluwe;2021;32252.01;NL221;NL
+Zuidwest-Gelderland;2021;10978.14;NL224;NL
+Achterhoek;2021;14673.93;NL225;NL
+Arnhem/Nijmegen;2021;33116.84;NL226;NL
+Flevoland;2021;16311.24;NL230;NL
+Flevoland;2021;16311.24;NL23;NL
+Kop van Noord-Holland;2021;13134.58;NL321;NL
+IJmond;2021;7503.06;NL323;NL
+Zaanstreek;2021;5913.04;NL325;NL
+Het Gooi en Vechtstreek;2021;11882.38;NL327;NL
+Alkmaar en omgeving;2021;9255.24;NL328;NL
+Agglomeratie Haarlem;2021;8259.78;NL32A;NL
+Groot-Amsterdam;2021;132824.32;NL32B;NL
+Zeeuwsch-Vlaanderen;2021;4556.11;NL341;NL
+Overig Zeeland;2021;10899.31;NL342;NL
+Utrecht;2021;85335.34;NL350;NL
+Utrecht;2021;85335.34;NL35;NL
+Agglomeratie â€™s-Gravenhage;2021;43252.67;NL361;NL
+Delft en Westland;2021;13597.4;NL362;NL
+Agglomeratie Leiden en Bollenstreek;2021;18123.1;NL363;NL
+Zuidoost-Zuid-Holland;2021;17990.23;NL364;NL
+Oost-Zuid-Holland;2021;12643.61;NL365;NL
+Groot-Rijnmond;2021;78653.19;NL366;NL
+West-Noord-Brabant;2021;32588.71;NL411;NL
+Zuidoost-Noord-Brabant;2021;48215.3;NL414;NL
+Midden-Noord-Brabant;2021;21836.91;NL415;NL
+Noordoost-Noord-Brabant;2021;34418.58;NL416;NL
+Noord-Limburg;2021;13255.07;NL421;NL
+Midden-Limburg;2021;9636.98;NL422;NL
+Zuid-Limburg;2021;26495.5;NL423;NL
+Delfzijl en omgeving;2022;2975.28;NL112;NL
+Oost-Groningen;2022;5925.95;NL114;NL
+Overig Groningen;2022;25802.93;NL115;NL
+Zuidoost-Friesland;2022;8421.2;NL126;NL
+Noord-Friesland;2022;13996.91;NL127;NL
+Zuidwest-Friesland;2022;5253.46;NL128;NL
+Noord-Drenthe;2022;7461.14;NL131;NL
+Zuidoost-Drenthe;2022;5950.56;NL132;NL
+Zuidwest-Drenthe;2022;6168.76;NL133;NL
+Noord-Overijssel;2022;19742.71;NL211;NL
+Zuidwest-Overijssel;2022;6939.71;NL212;NL
+Twente;2022;29592.8;NL213;NL
+Veluwe;2022;35076.76;NL221;NL
+Zuidwest-Gelderland;2022;11740;NL224;NL
+Achterhoek;2022;16088.23;NL225;NL
+Arnhem/Nijmegen;2022;37050.59;NL226;NL
+Flevoland;2022;18711.04;NL230;NL
+Flevoland;2022;18711.04;NL23;NL
+Kop van Noord-Holland;2022;14221.82;NL321;NL
+IJmond;2022;8215.31;NL323;NL
+Zaanstreek;2022;6326.53;NL325;NL
+Het Gooi en Vechtstreek;2022;12822.02;NL327;NL
+Alkmaar en omgeving;2022;10006.75;NL328;NL
+Agglomeratie Haarlem;2022;9224.6;NL32A;NL
+Groot-Amsterdam;2022;153027.25;NL32B;NL
+Zeeuwsch-Vlaanderen;2022;5119.18;NL341;NL
+Overig Zeeland;2022;12740.34;NL342;NL
+Utrecht;2022;91658.58;NL350;NL
+Utrecht;2022;91658.58;NL35;NL
+Agglomeratie â€™s-Gravenhage;2022;48069.98;NL361;NL
+Delft en Westland;2022;14566.46;NL362;NL
+Agglomeratie Leiden en Bollenstreek;2022;19721.45;NL363;NL
+Zuidoost-Zuid-Holland;2022;19628.58;NL364;NL
+Oost-Zuid-Holland;2022;13394.92;NL365;NL
+Groot-Rijnmond;2022;88283.83;NL366;NL
+West-Noord-Brabant;2022;34086.5;NL411;NL
+Zuidoost-Noord-Brabant;2022;53257.42;NL414;NL
+Midden-Noord-Brabant;2022;23420.69;NL415;NL
+Noordoost-Noord-Brabant;2022;37339.28;NL416;NL
+Noord-Limburg;2022;14498.2;NL421;NL
+Midden-Limburg;2022;10468.87;NL422;NL
+Zuid-Limburg;2022;27229.59;NL423;NL
+Delfzijl en omgeving;2023;2460.15;NL112;NL
+Oost-Groningen;2023;5197.71;NL114;NL
+Overig Groningen;2023;25571.31;NL115;NL
+Zuidoost-Friesland;2023;9209.18;NL126;NL
+Noord-Friesland;2023;15054.94;NL127;NL
+Zuidwest-Friesland;2023;5805.81;NL128;NL
+Noord-Drenthe;2023;8174.96;NL131;NL
+Zuidoost-Drenthe;2023;6517.11;NL132;NL
+Zuidwest-Drenthe;2023;6804.52;NL133;NL
+Noord-Overijssel;2023;21177.01;NL211;NL
+Zuidwest-Overijssel;2023;7488.08;NL212;NL
+Twente;2023;32041.82;NL213;NL
+Veluwe;2023;38703.19;NL221;NL
+Zuidwest-Gelderland;2023;12823.39;NL224;NL
+Achterhoek;2023;17458.49;NL225;NL
+Arnhem/Nijmegen;2023;39932.71;NL226;NL
+Flevoland;2023;20993.91;NL230;NL
+Flevoland;2023;20993.91;NL23;NL
+Kop van Noord-Holland;2023;15772.9;NL321;NL
+IJmond;2023;8445.72;NL323;NL
+Zaanstreek;2023;6878.87;NL325;NL
+Het Gooi en Vechtstreek;2023;12744.6;NL327;NL
+Alkmaar en omgeving;2023;10992.42;NL328;NL
+Agglomeratie Haarlem;2023;9900.51;NL32A;NL
+Groot-Amsterdam;2023;166827.19;NL32B;NL
+Zeeuwsch-Vlaanderen;2023;4833.74;NL341;NL
+Overig Zeeland;2023;14201.6;NL342;NL
+Utrecht;2023;99347.95;NL350;NL
+Utrecht;2023;99347.95;NL35;NL
+Agglomeratie â€™s-Gravenhage;2023;51599.81;NL361;NL
+Delft en Westland;2023;15770.68;NL362;NL
+Agglomeratie Leiden en Bollenstreek;2023;21572.05;NL363;NL
+Zuidoost-Zuid-Holland;2023;20960.62;NL364;NL
+Oost-Zuid-Holland;2023;14779.74;NL365;NL
+Groot-Rijnmond;2023;92378.09;NL366;NL
+West-Noord-Brabant;2023;36615.89;NL411;NL
+Zuidoost-Noord-Brabant;2023;59519.55;NL414;NL
+Midden-Noord-Brabant;2023;25160.73;NL415;NL
+Noordoost-Noord-Brabant;2023;40646.23;NL416;NL
+Noord-Limburg;2023;15707.43;NL421;NL
+Midden-Limburg;2023;11347.52;NL422;NL
+Zuid-Limburg;2023;28730.55;NL423;NL
+Pomurska;2018;1714.79;SI031;SI
+Podravska;2018;5711.45;SI032;SI
+KoroÅ¡ka;2018;1228.79;SI033;SI
+Savinjska;2018;5034.07;SI034;SI
+Zasavska;2018;662.09;SI035;SI
+Posavska;2018;1235.06;SI036;SI
+Jugovzhodna Slovenija;2018;3097.1;SI037;SI
+Primorsko-notranjska;2018;820.78;SI038;SI
+Osrednjeslovenska;2018;17025.49;SI041;SI
+Gorenjska;2018;4016.53;SI042;SI
+GoriÅ¡ka;2018;2332.28;SI043;SI
+Obalno-kraÅ¡ka;2018;2584.01;SI044;SI
+Pomurska;2019;1791.01;SI031;SI
+Podravska;2019;6089.02;SI032;SI
+KoroÅ¡ka;2019;1294.15;SI033;SI
+Savinjska;2019;5315.07;SI034;SI
+Zasavska;2019;702.4;SI035;SI
+Posavska;2019;1339.86;SI036;SI
+Jugovzhodna Slovenija;2019;3335.08;SI037;SI
+Primorsko-notranjska;2019;841.79;SI038;SI
+Osrednjeslovenska;2019;18122.11;SI041;SI
+Gorenjska;2019;4255.17;SI042;SI
+GoriÅ¡ka;2019;2426.6;SI043;SI
+Obalno-kraÅ¡ka;2019;2644.2;SI044;SI
+Pomurska;2020;1761.02;SI031;SI
+Podravska;2020;5904.84;SI032;SI
+KoroÅ¡ka;2020;1234.08;SI033;SI
+Savinjska;2020;5051.07;SI034;SI
+Zasavska;2020;700.26;SI035;SI
+Posavska;2020;1334.24;SI036;SI
+Jugovzhodna Slovenija;2020;3251.47;SI037;SI
+Primorsko-notranjska;2020;815;SI038;SI
+Osrednjeslovenska;2020;18055.11;SI041;SI
+Gorenjska;2020;3906.35;SI042;SI
+GoriÅ¡ka;2020;2307.8;SI043;SI
+Obalno-kraÅ¡ka;2020;2417.46;SI044;SI
+Pomurska;2021;1934.22;SI031;SI
+Podravska;2021;6612.37;SI032;SI
+KoroÅ¡ka;2021;1326.49;SI033;SI
+Savinjska;2021;5617.57;SI034;SI
+Zasavska;2021;758.75;SI035;SI
+Posavska;2021;1431.52;SI036;SI
+Jugovzhodna Slovenija;2021;3472.51;SI037;SI
+Primorsko-notranjska;2021;932.04;SI038;SI
+Osrednjeslovenska;2021;20394.81;SI041;SI
+Gorenjska;2021;4325.56;SI042;SI
+GoriÅ¡ka;2021;2571.52;SI043;SI
+Obalno-kraÅ¡ka;2021;2645.27;SI044;SI
+Pomurska;2022;2123.17;SI031;SI
+Podravska;2022;7216.84;SI032;SI
+KoroÅ¡ka;2022;1492.78;SI033;SI
+Savinjska;2022;6223.99;SI034;SI
+Zasavska;2022;837.48;SI035;SI
+Posavska;2022;1619.16;SI036;SI
+Jugovzhodna Slovenija;2022;3710.23;SI037;SI
+Primorsko-notranjska;2022;993.71;SI038;SI
+Osrednjeslovenska;2022;21810.95;SI041;SI
+Gorenjska;2022;4978.51;SI042;SI
+GoriÅ¡ka;2022;2813.1;SI043;SI
+Obalno-kraÅ¡ka;2022;3088.86;SI044;SI
+Pomurska;2023;2319.81;SI031;SI
+Podravska;2023;8086.23;SI032;SI
+KoroÅ¡ka;2023;1606.98;SI033;SI
+Savinjska;2023;6816.96;SI034;SI
+Zasavska;2023;942.48;SI035;SI
+Posavska;2023;1878.45;SI036;SI
+Jugovzhodna Slovenija;2023;4004.3;SI037;SI
+Primorsko-notranjska;2023;1063.87;SI038;SI
+Osrednjeslovenska;2023;25144.48;SI041;SI
+Gorenjska;2023;5493.01;SI042;SI
+GoriÅ¡ka;2023;3217.25;SI043;SI
+Obalno-kraÅ¡ka;2023;3377.43;SI044;SI
