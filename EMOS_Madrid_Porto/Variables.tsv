@@ -1,0 +1,12 @@
+Name	Description	Source
+SUBID	Sub basin identifier	Level A Pan European Subbasins, E-HYPE 3.0 Type (Isberg, 2017)
+HAROID	ID of the main river catchment	Level A Pan European Subbasins, E-HYPE 3.0 Type (Isberg, 2017)
+DOWN	ID of the downstream SUBID	Level A Pan European Subbasins, E-HYPE 3.0 Type (Isberg, 2017)
+Total nitrogen concentration in catchments	(mg/L) Annual mean of mass of nitrogen divided by the volume of water, from a catchment, averaged for 1971-2000	Copernicus Climate Change Service, Climate Data Store (2021)
+Total nitrogen concentration in local streams	(mg/L) Annual mean of mass of nitrogen divided by the volume of water, from a local stream, averaged for 1971-2000.	Copernicus Climate Change Service, Climate Data Store (2021)
+Total nitrogen load in catchments	(kg/year) Annual mean of the product of the river discharge and the nitrogen concentrations from a catchment, averaged for 1971-2000.	Copernicus Climate Change Service, Climate Data Store (2021)
+Total phosphorus concentration in catchments	(mg/L) Annual mean of mass of phosphorus divided by the volume of water, from a catchment, averaged for 1971-2000	Copernicus Climate Change Service, Climate Data Store (2021)
+Total phosphorus concentration in local streams	(mg/L) Annual mean of mass of phosphorus divided by the volume of water, from a local stream, averaged for 1971-2000.	Copernicus Climate Change Service, Climate Data Store (2021)
+Total phosphorus load in catchments	(kg/year) Annual mean of the product of the river discharge and the phosphorus concentrations from a catchment, averaged for 1971-2000.	Copernicus Climate Change Service, Climate Data Store (2021)
+River discharge	(m3/s) Streamflow. Annual mean values of daily runoff, averaged for 1971-2000.	Copernicus Climate Change Service, Climate Data Store (2021)
+Percentage of land, per land cover type	Calculated as the amount of pixels within a subbasin by land cover type divided by the total of pixels composing the subbasin. 	Calculated based on Corine Land Cover
