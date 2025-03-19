@@ -1,0 +1,77 @@
+// ==========================
+// User Parameters
+// ==========================
+var startYear = 2023;
+var testMonth = 5; // Target May 15, 2023
+
+// ==========================
+// Import your two polygon assets
+// ==========================
+var polygons1 = ee.FeatureCollection("projects/ee-greatathithya/assets/NUTS_SL_01m_2024"); // First shapefile
+var polygons2 = ee.FeatureCollection("projects/ee-greatathithya/assets/NUTS_NL_01m_2024"); // Second shapefile
+
+// Merge both polygons into a single FeatureCollection
+var allPolygons = polygons1.merge(polygons2);
+
+print("Merged Polygons:", allPolygons);
+
+// ==========================
+// PM2.5 Image Collection
+// ==========================
+var pm25Collection = ee.ImageCollection("ECMWF/CAMS/NRT")
+                      .select('particulate_matter_d_less_than_25_um_surface');
+
+// ==========================
+// Function to compute PM2.5 for a specific day
+// ==========================
+function getPM25ForDay(year, month, day) {
+  var startDate = ee.Date.fromYMD(year, month, day);
+  var endDate = startDate.advance(1, 'day'); // End date is the next day
+  
+  // Compute the average PM2.5 for the single day
+  var dailyImage = pm25Collection.filterDate(startDate, endDate).mean();
+  
+  // Check if the image has data
+  if (dailyImage.bandNames().length().getInfo() === 0) {
+    print('No data available for this day:', startDate.format('YYYY-MM-dd'));
+    return null;
+  }
+  
+  // Reduce the image over each polygon using the mean reducer
+  var stats = dailyImage.reduceRegions({
+    collection: allPolygons, // Using merged polygons
+    reducer: ee.Reducer.mean(),
+    scale: 7000 // Scale set to 7km for TROPOMI resolution
+  }).map(function(feature) {
+    // Set additional properties to track year, month, day, and date
+    return feature.set({
+      'year': year,
+      'month': month,
+      'day': day,
+      'start_date': startDate.format("YYYY-MM-dd")
+    });
+  });
+  
+  return stats;
+}
+
+// ==========================
+// Get PM2.5 Stats for May 15th, 2023
+// ==========================
+var dailyStats = getPM25ForDay(startYear, testMonth, 15);
+
+// Check if results exist and print
+if (dailyStats) {
+  print("PM2.5 Stats for May 15th, 2023:", dailyStats);
+} else {
+  print("No data available for May 15th, 2023.");
+}
+
+// ==========================
+// Export the results as a CSV file to Google Drive
+// ==========================
+Export.table.toDrive({
+  collection: dailyStats,
+  description: 'PM25_Day_May_15_2023',
+  fileFormat: 'CSV'
+});
