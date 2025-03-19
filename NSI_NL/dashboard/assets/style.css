@@ -1,0 +1,76 @@
+.container {
+  display: grid;
+  grid-template-areas: 
+    "header header header"
+    "page_title page_title page_title"
+    "map map indexes"
+    "trend trend box"
+    "csv csv csv";
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 10px;
+}
+
+
+h1, h2 {
+  color: #271D6C;
+}
+
+.header {
+  grid-area: header;
+}
+
+.page_title {
+  grid-area: page_title;
+}
+
+.container > div {
+  background-color: #E9E9E9;
+  padding: 10px;
+}
+
+.indexes {
+  grid-area: indexes;
+}
+
+.index {
+  padding: 10px;
+  margin: 5px;
+  color: #FFFFFF;
+  background: #00A1CD;
+}
+
+.index h3, .index h2 {
+  color: #FFFFFF;
+}
+
+#choropleth {
+}
+
+.map {
+  grid-area: map;
+	#height: 100vh;
+}
+
+.trend {
+  grid-area: trend;
+}
+
+.box {
+  grid-area: box;
+}
+
+.filters {
+  grid-area: filters;
+  display: flex;
+}
+
+.filter {
+  grid-area: filter;
+  padding: 10px;
+}
+
+
+.csv {
+  grid-area: csv;
+}
