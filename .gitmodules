@@ -1,0 +1,6 @@
+[submodule "/home/onyxia/work/eubd2025_results/NSI_FR/model"]
+	path = /home/onyxia/work/eubd2025_results/NSI_FR/model
+	url = https://github.com/InseeFrLab/hackathon-ntts-2025
+[submodule "/home/onyxia/work/eubd2025_results/NSI_FR/dashboard"]
+	path = /home/onyxia/work/eubd2025_results/NSI_FR/dashboard
+	url = https://github.com/clement2323/webapphackathon2025

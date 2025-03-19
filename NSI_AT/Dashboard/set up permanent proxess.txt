@@ -1,0 +1,34 @@
+# Create the service file in your home directory
+nano ~/ntts_app.service
+
+Then create the service file with the correct paths:
+
+[Unit]
+Description=NTTS Web Application
+After=network.target
+
+[Service]
+User=cnoll
+WorkingDirectory=/home/cnoll/hackathon/Hackathon_NTTS_2025/app
+Environment="PATH=/home/cnoll/hackathon/Hackathon_NTTS_2025/.venv/bin"
+ExecStart=/home/cnoll/hackathon/Hackathon_NTTS_2025/.venv/bin/python3 /home/cnoll/hackathon/Hackathon_NTTS_2025/app/server.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+
+# Copy the service file
+sudo cp ~/ntts_app.service /etc/systemd/system/
+
+# Set permissions
+sudo chmod 644 /etc/systemd/system/ntts_app.service
+
+# Reload systemd
+sudo systemctl daemon-reload
+
+# Start the service
+sudo systemctl start ntts_app
+
+# Check status
+sudo systemctl status ntts_app

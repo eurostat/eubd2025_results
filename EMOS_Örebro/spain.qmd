@@ -1,0 +1,240 @@
+---
+format:
+  dashboard:
+    nav-buttons:
+      - icon: github
+        href: https://github.com/joseph-data/Team05
+    theme: lux
+---
+
+```{r install-python-libs, include=FALSE, message=FALSE, warning=FALSE, results='hide'}
+library(reticulate)
+py_install(
+  c("pillow", "numpy", "geopandas", "folium", "fiona", "matplotlib", "pandas", "plotly", "ipython"), 
+  pip = TRUE
+)
+```
+
+```{python , message=FALSE, warning=FALSE, include=FALSE, results = 'hide'}
+import io
+import numpy as np
+#import plotly.express as px
+#import plotly.graph_objects as go
+from PIL import Image
+
+import geopandas as gpd
+import folium
+import fiona
+
+from IPython.display import display
+
+import matplotlib.pyplot as plt
+
+import pandas as pd
+import plotly.express as px
+```
+
+## Row
+
+### Column {width="10%"}
+
+#### Row
+
+```{python}
+#| content: valuebox
+#| title: "NDVI Ratio"
+#| color: primary
+value = 0.4832
+percentage = f"{value:.2%}"
+
+dict(
+  value = percentage
+)
+```
+
+#### Row
+
+```{python}
+#| content: valuebox
+#| title: "OTCI Ratio"
+#| color: primary
+value = 0.9667
+percentage = f"{value:.2%}"
+
+dict(
+  value = percentage
+)
+```
+
+#### Row
+
+```{python}
+#| content: valuebox
+#| title: "Area impacted"
+#| color: primary
+value = 196.00
+formatted_value = f"{value:.2f} km²" 
+
+dict(
+  value = formatted_value
+)
+```
+
+#### Row
+
+```{python}
+#| content: valuebox
+#| title: "Fire start date"
+#| color: primary
+value = "18/08/2022"
+
+dict(
+  value = value
+)
+```
+
+### Column
+
+#### Row {height="80%"}
+
+```{python}
+
+#| warning: false
+#| messages: false
+
+# Read and prepare shapefile data
+local_shapefile_path = r"./data/nuts/NUTS_RG_20M_2024_3035.shp"
+gdf = gpd.read_file(local_shapefile_path).to_crs(epsg=4326)  # Convert to WGS84
+
+# Create base map centered on your custom polygon area
+m = folium.Map(location=[39.85, -0.70], zoom_start=11)  # Coordinates approximate to your polygon
+
+# Add original shapefile data (NUTS regions)
+folium.GeoJson(
+  gdf,
+  name="NUTS Regions",
+  style_function=lambda x: {'fillColor': 'none', 'color': 'grey', 'weight': 0.5}
+).add_to(m);
+
+# Add your custom polygon overlay
+custom_polygon = {"type":"Polygon","coordinates":[[[-0.668106,39.835696],[-0.65403,39.812228],[-0.627594,39.791391],[-0.615578,39.801151],[-0.609398,39.82304],[-0.619011,39.828577],[-0.615234,39.841232],[-0.603561,39.852566],[-0.622444,39.863635],[-0.635834,39.863635],[-0.650253,39.877073],[-0.639954,39.881816],[-0.667076,39.89367],[-0.654716,39.904732],[-0.635147,39.896831],[-0.620728,39.913423],[-0.627594,39.930801],[-0.64579,39.960807],[-0.673943,39.967385],[-0.698318,39.958965],[-0.739517,39.968701],[-0.74913,39.958965],[-0.736427,39.947121],[-0.761147,39.939488],[-0.786552,39.940804],[-0.801659,39.898411],[-0.797195,39.883396],[-0.808525,39.872858],[-0.776596,39.847031],[-0.749817,39.859418],[-0.733681,39.859155],[-0.734024,39.834641],[-0.716171,39.806954],[-0.708618,39.819085],[-0.709648,39.826995],[-0.697632,39.842022],[-0.685616,39.834114],[-0.668106,39.835696]]]}
+
+folium.GeoJson(
+  custom_polygon,
+  name="Spain Focus Area",
+  style_function=lambda x: {
+    'fillColor': '#ff0000',  # Red fill
+    'color': '#ff0000',      # Red border
+    'weight': 2,
+    'fillOpacity': 0.3
+  },
+  tooltip="Spain Focus Areas"
+).add_to(m);
+
+# Add layer control and save
+folium.LayerControl().add_to(m);
+m
+```
+
+#### Row
+
+```{python}
+
+# Adjust display settings
+pd.set_option('display.max_columns', None)  # Show all columns
+pd.set_option('display.width', 1000)  # Increase display width
+pd.set_option('display.max_colwidth', None)  # Show full column content
+
+df = pd.read_csv("./data/TabDown.csv")  # Replace with your CSV file
+display(df)
+
+```
+
+### Column
+
+#### Column {.tabset}
+
+```{r}
+#| title: "NDVI plot"
+#| padding: 0px
+library(imager)
+
+# Load the image
+image_path <- "./photo/spain_ndvi.png"
+img <- load.image(image_path)
+
+# Set the plot margins
+par(mar = c(0, 0, 0, 0))
+
+# Display the image
+plot(img, axes = F)
+```
+
+```{r}
+#| title: "OTCI plot"
+library(imager)
+
+# Load the image
+image_path <- "./photo/spain_otci.png"
+img <- load.image(image_path)
+
+# Set the plot margins
+par(mar = c(0, 0, 0, 0))
+
+# Display the image
+plot(img, axes = F)
+```
+
+```{python}
+#| title: "NDVI graph"
+
+# Read the CSV file
+ndvi_data = pd.read_csv("./data/Spain_2022_NDVI.csv")
+
+# Convert 'C0/date' to a datetime and normalize the time to midnight
+ndvi_data['C0/date'] = pd.to_datetime(ndvi_data['C0/date']).dt.normalize()
+
+# Create an interactive line chart using Plotly Express
+fig = px.line(ndvi_data, x='C0/date', y='C0/mean', title='NDVI')
+
+# Update the layout for better aesthetics
+fig.update_layout(
+    title={'text': 'NDVI', 'x': 0.5, 'xanchor': 'center'},
+    xaxis_title='Date',
+    yaxis_title='NDVI',
+    xaxis=dict(tickformat='%Y-%m-%d'),
+    template='plotly_white',
+    margin=dict(l=50, r=50, t=60, b=50)
+)
+
+# Display the interactive plot
+fig.show();
+```
+
+```{python}
+#| title: "OTCI Graph"
+#Albergaria_2024_OTCI = pd.read_csv("./data/Spain_2022_OTCI.csv")
+
+# Read the CSV file
+otci_data = pd.read_csv("./data/Spain_2022_OTCI.csv")
+
+# Convert 'C0/date' to a datetime and normalize the time to midnight
+otci_data['C0/date'] = pd.to_datetime(otci_data['C0/date']).dt.normalize()
+
+# Create an interactive line chart with Plotly Express
+fig = px.line(otci_data, x='C0/date', y='C0/mean', title='OTCI')
+
+# Update the layout for better aesthetics
+fig.update_layout(
+    title={'text': 'OTCI', 'x': 0.5, 'xanchor': 'center'},
+    xaxis_title='Date',
+    yaxis_title='OTCI',
+    xaxis=dict(tickformat='%Y-%m-%d'),
+    template='plotly_white',
+    margin=dict(l=50, r=50, t=60, b=50)
+)
+
+# Display the interactive plot
+fig.show();
+
+```

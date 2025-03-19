@@ -1,0 +1,679 @@
+body {
+  --var: #f4f6f9;
+  --white:#fff;
+  --main: #0c4594;
+  --second:#0c4594;
+}
+
+body.dark-mode {
+    --var: #40474e;
+    --white: #343a40;
+    --main: #163157;
+    --second:#7e94b3;
+}
+
+#vbox1 {
+    margin-left: 5px !important;
+    width: 49% !important;
+}
+
+.wrapper {
+    background: var(--var);
+}
+
+/* satelita */
+  
+  .satelita {
+    position: fixed;
+    bottom: 70px;
+    left: 0px;
+    opacity: 0.2;
+    color: #adc0da;
+  }
+
+.satelita i {
+  font-size: 500px;
+}
+
+.imgstop {
+  position: absolute;
+  width: 300px;
+  top: -30px;
+  right: -30px;
+  border: 5px solid var(--white);
+  border-radius: 40px;
+  height: 60px;
+  object-fit: cover;
+}
+
+.main-footer {
+  border: none;
+  box-shadow: -2px 2px 10px rgb(0 0 0 / 20%);
+  border-radius: 60px;
+  margin-left: 40% !important;
+  position: relative;
+  margin-right: 50px;
+  margin-top: -40px;
+  background:var(--white);
+}
+
+
+@media (min-width: 768px) {
+    body:not(.sidebar-mini-md) .main-footer {
+        margin-left: initial
+    }
+  
+    
+}
+
+.content-wrapper {
+  padding-bottom: 70px;
+}
+
+/* valueBox */
+
+.btn {
+    color: white;
+    border: none;
+}
+
+.bg-success {
+    font-size: 40px;
+    font-weight: bold;
+}
+
+
+
+/* boxy */
+
+.card-header .nav-item a {
+    color: #0c4594 !important;
+
+}
+
+.dark-mode .card-header .nav-item a {
+    color: #adc0da !important;
+
+}
+
+
+
+
+.card-info .card-header {
+    display: none;
+}
+
+.card-header {
+  border-color:transparent !important;
+}
+
+.card {
+  border-radius: 20px;
+  box-shadow: 0px 2px 10px rgb(0 0 0 / 15%);
+  padding: 10px;
+}
+
+.overviewDesc .card-header {
+  display: none;
+}
+
+.card-info .box-header {
+  display: none;
+}
+
+.card-info {
+  background: var(--main) !important;
+    border: 5px solid var(--var) !important;
+}
+
+.card.bslib-card {
+  background: var(--main) !important;
+}
+
+.card-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index:1;
+}
+
+
+/* darkmode */
+
+.dark-mode .main-svg {
+  background:transparent !important;
+}
+
+.dark-mode svg text {
+  fill: #ffffff !important;
+}
+
+
+.dark-mode .rowTab3 svg .land path {
+    fill: #343a40 !important;
+}
+
+.dark-mode .mapki path.choroplethlocation {
+    stroke: black !important;
+}
+
+.dark-mode .rowTab3 .countries path {
+  stroke: transparent !important;
+}
+
+.dark-mode div.datatables {
+  color: #c6c6c6;
+}
+
+/* dt */
+
+button.dt-button {
+  border-radius: 20px !important;
+  border: none !important;
+  background: linear-gradient(45deg, #0c4594, #0c459487) !important;
+                              color: white !important;
+                              margin: 5px 1px!important;
+                              box-shadow: -2px 2px 5px rgb(0 0 0 / 20%);
+                              font-weight: 600;
+}
+
+/* mapki */
+ .mapki {
+   display: flex;
+ }
+
+/* .navbar */
+.nav-header {
+ list-style-type: none
+}
+
+.nav-sidebar {
+    position: fixed;
+    display: flex;
+    flex-direction: row !important;
+    top: 0px;
+    height: 55px;
+    left: 0px;
+    background: var(--main);
+    justify-content: start;
+    align-items: center;
+    width: 470px;
+    padding: 0px 10px;
+    z-index:999;
+}
+
+
+.logoH {
+    position: absolute;
+    right: 10px;
+    width: 30%;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 30px;
+    top: 0px;
+}
+
+li.nav-header {
+    position: relative;
+    height: 105px;
+}
+
+nav.main-header {
+    background: var(--main);
+    border-color: transparent;
+}
+
+.init1::before {
+  position: absolute;
+  content: '';
+  width: 100%;
+  height: 230px;
+  background: var(--main);
+    left: 0px;
+  top: 0px;
+}
+
+.overRow {
+  margin-top:-50px;
+  position:relative;
+}
+
+.navbar,  .sidebar-mini.sidebar-collapse .main-header {
+    margin-left: 460px !important;
+    z-index:9999 !important;
+        height: 55px;
+}
+
+
+.elevation-4 {
+    box-shadow: none !important;
+    width: 100%;
+    height: 150px !important;
+    position: relative !important;
+    margin-top: 55px;
+    background:transparent;
+}
+
+.headerek {
+display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row-reverse;
+    height: 90px;
+    position: absolute;
+    left: 50%;
+    top: -20px;
+    transform: translate(-50%, 0px);
+}
+
+.tytul {
+  text-transform: uppercase;
+  font-weight: 900;
+  letter-spacing: 1px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 50px;
+      color: white;
+      width:max-content;
+}
+
+.imgcop {
+    width: 331px;
+    aspect-ratio: 10 / 1;
+}
+
+.imgcis {
+  width: 170px;
+background:white;
+  height: 70px;
+  object-fit: cover;
+}
+
+[class*=sidebar-dark-] .nav-header {
+    background-color: inherit;
+    color: #adc0da;
+}
+
+i.fas.fa-bars {
+    display: none;
+}
+
+.content-wrapper {
+  margin-left:0px !important;
+  margin-right:0px !important;
+  padding-left:90px;
+  padding-right:90px;
+}
+
+.nav-link {
+    color: white !important;
+}
+
+.nav-item .active {
+    background: white !important;
+    box-shadow: none !important;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border-radius: 0px;
+    padding: 5px 10px;
+    color: #243f9c !important;
+    border-radius:20px;
+}
+
+.nav-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+}
+
+.main-header li.nav-item {
+    display: none;
+}
+
+.card-header .active {
+    font-weight:900;
+    border-radius:10px;
+    background: var(--var) !important; 
+}
+
+/* tab2 mapka */
+
+.obrTab2 {
+    position: absolute;
+    top: -30px;
+    width: 450px;
+    opacity: 0.4;
+    height: 100%;
+    right: 0px;
+}
+
+.navbar-right .custom-switch:nth-child(2) {
+    display:none !important;
+}
+
+.navbar-right .custom-switch i {
+    color:white !important;
+}
+
+#krajUITab2 {
+    color: white;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.overRow .bg-gray {
+    background-color: var(--white) !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #0c4594 !important;
+    padding: 10px 20px !important;
+}
+
+.dark-mode .overRow .bg-gray {
+  color:white !important;
+}
+
+#krajUITab2 .shiny-options-group{
+  display: grid !important;
+    row-gap: 10px !important;
+    width: 100% !important;
+    grid-template-columns: repeat(auto-fit, minmax(131px, 1fr)) !important;
+}
+
+.valueB {
+ margin-top: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.sidebar-collapse .main-sidebar, .sidebar-collapse .main-sidebar::before {
+  margin-left:0px;
+}
+
+/* obrazki z sentinela */
+.slickR img {
+    width: 90% !important;
+    border-radius: 20px;
+    margin: 0 auto;
+    height: 650px;
+    object-fit: cover;
+}
+
+.card-body.karuzelka {
+    display: flex;
+    justify-content: space-between;
+}
+
+#opisKaruzeli {
+    position: absolute;
+    width: 50%;
+    top: 182px;
+    left: 0px;
+}
+
+#opisKaruzeli1 {
+   position: absolute;
+    width: 50%;
+    top: 182px;
+    right: 0px;
+}
+
+.headerKaruzela, .headerKaruzela1 {
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 40px;
+}
+
+.karuzelka p {
+    text-align: justify;
+}
+
+.karuzelka .small-box {
+    background: var(--main) !important;
+    box-shadow: initial;
+    color: var(--white) !important;
+    height:80px;
+    border-radius:60px;
+    display:flex;
+    justify-content: center;
+    align-items:center;
+    margin-top:10px;
+}
+
+.karuzelka .small-box .inner {
+    display:none;
+}
+
+.karuzelka .small-box a {
+    font-size: 20px;
+    text-transform: lowercase;
+    color: var(--white) !important;
+}
+
+.karuzelka .small-box-footer, .karuzelka .small-box:hover .small-box-footer  {
+    min-height: 50px !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 40px;
+    background:transparent;
+}
+
+.small-box .icon>i {
+  font-size:65px !important;
+  top:7px !important;
+  
+}
+
+.slick-slide {
+    background: transparent !important;
+}
+
+.slick-prev:before, .slick-next:before {
+    color: var(--second) !important;
+}
+
+
+.countrySel {
+    position: absolute;
+    border-radius: 20px;
+    padding: 0px 20px;
+}
+
+label.radio-inline {
+    width: 50px;
+    position: relative;
+}
+  
+label.radio-inline img {
+    width: 50px;
+    position:absolute;
+    left:0px;
+    cursor: pointer;
+}
+
+.countrySel::before {
+    content: '';
+    position: absolute;
+    background: var(--white);
+    width: 100%;
+    height: 50%;
+    z-index: -1;
+    bottom: 10px;
+    left: 0px;
+    border-radius: 10px;
+}
+
+div#countryInput {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.countrySel .control-label {
+    color: white;
+    font-family: poppins;
+    font-size: 14px !important;
+    margin-top: -5px;
+    margin-bottom: 10px;
+}
+
+#selectNUTS3 .shiny-input-container > label, .dark-mode .filter-option-inner-inner {
+    color: white !important;
+}
+
+#selectNUTS3 .shiny-input-container {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.dropdown-item.active, .dropdown-item:active, #selectDate label {
+  color:white !important;
+  background:var(--main);
+}
+
+.filter-option-inner-inner {
+    color: #1f2d3d;
+}
+
+.row.valueB .slickR img {
+    height: 480px !important;
+    object-fit: cover;
+    width: initial !important;
+    border-radius: 0px;
+}
+
+.mapki g.lines path {
+    stroke: var(--white) !important;
+    stroke-width: 0.5 !important;
+}
+
+.mapsyComp {
+  display:flex;
+  gap:10px;
+}
+
+.overRow .card-success {
+  border-top-color:transparent;
+}
+
+.selectory {
+  display: flex;    
+  justify-content: space-around;
+    align-items: center;
+}
+
+
+.mapki .infolayer, .infor .card-header {
+  display:none;
+}
+
+.weatherD {
+    width: 100%;
+}
+
+#weatherAggr .radio-inline {
+    width: 24%;
+}
+
+#floodArea {
+      margin-top: -20px;
+    margin-bottom: 40px !important;
+}
+
+#floodArea .small-box, #peopleWhoSuff .small-box{
+  position:relative;
+    background: var(--main) !important;
+    border-radius: 30px;
+}
+
+#floodArea .small-box-footer, #peopleWhoSuff .small-box-footer {
+    display: none;
+}
+
+#peopleWhoSuff .inner {
+  font-size: 50px;
+    font-weight: bold;
+}
+
+#floodArea .inner {
+    font-size: 60px;
+    font-weight: bold;
+}
+
+#floodArea .icon, #peopleWhoSuff .icon {
+width:70px;
+height:70px;
+position:absolute;
+    top:20px;
+    right:0px;
+    
+}
+
+.strzalka {
+    position: absolute;
+    top: 50%;
+    left: 51%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    z-index: 99;
+}
+
+.strzalka i {
+    font-size: 70px;
+    color:white;
+}
+
+@media (max-width: 1200px) {
+  
+  .karuzelka .col-sm-5, .strzalka, #opisKaruzeli, #opisKaruzeli1 {
+    display: none;
+}
+
+
+.row.valueB .slickR img {
+    width:90% !important;
+}
+  
+#vbox1, #vbox2 {
+    width:95% !important;
+    
+}
+  
+  .countrySel {
+    left: 50%;
+    transform: translate(-50%, 0px);
+}
+
+.content-wrapper {
+
+padding-right: 0px !important;
+    padding-left:0px !important;
+    
+}
+  
+  .countrySel {
+    left: 50%;
+    transform: translate(-50%, 0px);
+}
+  
+  .logoH {
+    display:none !important;
+  }
+  
+    .main-footer {
+    width: 100%;
+    margin-left: 0px !important;
+    border-radius: 0px;
+}
+
+}

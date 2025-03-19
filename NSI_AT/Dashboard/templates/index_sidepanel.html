@@ -1,0 +1,163 @@
+<div id="sidepanel">
+    <div id="tools-container">
+        <div class="left">
+            <img id="main-logo" viewBox="0 0 863 351" data-name="main logo" src="{{url_for('static', filename='images/EU-Big-Data-Hackathon-2025_horiz.jpg')}}" class="main-logo" style="width: 100%; height: 100%;" />
+        </div>
+        <div class="tabs-container">
+            <div class="tabs-wrapper">
+                <ul class="tab-list" data-tab="tools">
+                    <li id="visual-date" class="tab-selected" value=1> Satellite</li>
+                    <li id="other-data" class="" value=2> Data</li>
+                </ul>
+            </div>
+        </div>
+        <div id="visualization-tab" class="tabPanelContainer">
+            <div class="compartment" id="compartment0">
+                <h3>Date Selection
+                    <div class="date-picker">
+                        <div class="month-nav-wrapper">
+                            <button class="month-nav" id="prev-month">
+                                <i class="fas fa-chevron-left">
+
+                                </i>
+                            </button>
+                            <input type="month" id="month-select" name="month-select" min="2024-04" max="2024-09" value="2024-08">
+                            <button class="month-nav" id="next-month">
+                                <i class="fas fa-chevron-right">
+
+                                </i>
+                            </button>
+                        </div>
+                    </div>
+                </h3>
+            </div>
+            <div class="compartment" id="compartment1">
+                <h3>Observation regions
+                    <div class="content">
+                        <label for="shapefile-select" class="dropdown-label">NUTS-Codes:</label>
+                        <div class="dropdown-container">
+                            <select id="shapefile-select" class="dropdown-select">
+                                <option value="" disabled selected>--Select a region--</option>
+                            </select>
+                        </div>
+                    </div>
+                </h3>
+            </div>
+            <div id="tab1" class="tab-content active">
+                <div class="compartment" id="compartment2">
+                    <div class="layer-selection">
+                        <div class="layer-header">
+                            <div class="layer-title">
+                                <h3 class="collapsible">Layer selection:</h3>
+                            </div>
+                            <div class="layer-container" id="forest">
+                                <div class="layer-box">
+                                    <div class="preview">
+                                        <img class="icon" crossorigin="Anonymous" src="{{url_for('static', filename='images/forest.png')}}" />
+                                    </div>
+                                    <div class="title">
+                                        <span class="active-title">Forest</span>
+                                        <span class="active-description">CORINE Land Cover </span>
+                                    </div>
+                                    <div class="icons">
+                                        <div id="corine-shape-select" class="plus-corine" title="Add to">
+                                            <i class="fas fa-plus"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layer-container" id="temp">
+                                <div class="layer-box">
+                                    <div class="preview">
+                                        <img class="icon" crossorigin="Anonymous" src="{{url_for('static', filename='images/temp.png')}}" />
+                                    </div>
+                                    <div class="title">
+                                        <span class="active-title">Temperature</span>
+                                        <span class="active-description">ERA5-Data </span>
+                                    </div>
+                                    <div class="icons">
+                                        <div class="plus" title="Add to">
+                                            <i class="fas fa-plus"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layer-container" id="ndvi">
+                                <div class="layer-box">
+                                    <div class="preview">
+                                        <img class="icon" crossorigin="Anonymous" src="{{url_for('static', filename='images/ndvi.png')}}" />
+                                    </div>
+                                    <div class="title">
+                                        <span class="active-title">NDVI</span>
+                                        <span class="active-description">Sentinel B4, B8</span>
+                                    </div>
+                                    <div class="icons">
+                                        <div class="plus" title="Add to">
+                                            <i class="fas fa-plus"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layer-container" id="evi">
+                                <div class="layer-box">
+                                    <div class="preview">
+                                        <img class="icon" crossorigin="Anonymous" src="{{url_for('static', filename='images/evi.png')}}" />
+                                    </div>
+                                    <div class="title">
+                                        <span class="active-title">EVI</span>
+                                        <span class="active-description">Sentinel B1, B5, B9</span>
+                                    </div>
+                                    <div class="icons">
+                                        <div class="plus" title="Add to">
+                                            <i class="fas fa-plus"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layer-container" id="lci">
+                                <div class="layer-box">
+                                    <div class="preview">
+                                        <img class="icon" crossorigin="Anonymous" src="{{url_for('static', filename='images/lci.png')}}" />
+                                    </div>
+                                    <div class="title">
+                                        <span class="active-title">LCI</span>
+                                        <span class="active-description">Sentinel B4, B5, B8</span>
+                                    </div>
+                                    <div class="icons">
+                                        <div class="plus" title="Add to">
+                                            <i class="fas fa-plus"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layer-container" id="lwc">
+                                <div class="layer-box">
+                                    <div class="preview">
+                                        <img class="icon" crossorigin="Anonymous" src="{{url_for('static', filename='images/lwc.png')}}" />
+                                    </div>
+                                    <div class="title">
+                                        <span class="active-title">LWC</span>
+                                        <span class="active-description">Sentinel B8, B11</span>
+                                    </div>
+                                    <div class="icons">
+                                        <div class="plus" title="Add to">
+                                            <i class="fas fa-plus"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="tab2" class="tab-content">
+                <div class="compartment" id="compartment4">
+                    <h3 class="collapsible">Statistical Analysis</h3>
+                    <div class="content">
+                        <p>Insert text here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

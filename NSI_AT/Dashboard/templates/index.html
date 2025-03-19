@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map WebApp</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css')}}" />
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/georaster"></script>
+    <script src="https://unpkg.com/georaster-layer-for-leaflet@3.10.0"></script>
+</head>
+<body>
+    <!-- Start Screen -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="splash-logo">
+        </div>
+    </div>
+    {% include 'index_sidepanel.html' %}
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/georaster"></script>
+    <script src="https://unpkg.com/georaster-layer-for-leaflet@3.10.0"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Declare selectedLabel in parent scope
+            var selectedLabel = "";
+
+            // Get splash screen elements
+            const splashScreen = document.getElementById('splash-screen');
+            const splashContent = document.querySelector('.splash-content');
+
+            // Only remove splash screen when clicking on the logo/content
+            splashContent.addEventListener('click', () => {
+                splashScreen.classList.add('fade-out');
+                setTimeout(() => {
+                    splashScreen.remove();
+                }, 500);
+            });
+        
+            // Variables for map view and marker position
+            var mapLat = 48.210033;
+            var mapLng = 16.363449;
+            var mapZoom = 5;
+        
+            // Initialize map
+            var map = L.map('map', { zoomControl: false }).setView([mapLat, mapLng], mapZoom);
+        
+            // Create panes before adding any layers
+            map.createPane('regions');
+            map.getPane('regions').style.zIndex = 100;  // Bottom layer
+                    
+            map.createPane('corine');
+            map.getPane('corine').style.zIndex = 200;  // Middle layer
+                    
+            map.createPane('tiff');
+            map.getPane('tiff').style.zIndex = 300;  // Top layer
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+        
+            // Add custom zoom control
+            L.control.zoom({ position: 'topright' }).addTo(map);
+        
+            // Variable to keep track of the current layers
+            var currentLayer = null;
+            var currentTiffLayer = null;
+        
+            // Fetch shapefiles data and populate dropdown
+            fetch('/get_shapes')
+                .then(response => response.json())
+                .then(data => {
+                    var shapefileSelect = document.getElementById('shapefile-select');
+
+                    // Clear existing options
+                    shapefileSelect.innerHTML = '<option value="" disabled selected>--Select a region--</option>';
+
+                    data.features.forEach(function(feature, index) {
+                        var option = document.createElement('option');
+                        option.value = index;
+                        option.text = feature.properties.NUTS_ID || `Shapefile ${index + 1}`;
+                        shapefileSelect.appendChild(option);
+                    });
+                
+                    shapefileSelect.addEventListener('change', function() {
+                        var selectedIndex = shapefileSelect.value;
+
+                        // Reset selectedLabel
+                        selectedLabel = "";
+
+                        // Remove existing GeoJSON layer if it exists
+                        if (currentLayer && map.hasLayer(currentLayer)) {
+                            map.removeLayer(currentLayer);
+                        }
+
+                        if (selectedIndex !== "") {
+                            var selectedFeature = data.features[selectedIndex];
+                            selectedLabel = selectedFeature.properties.NUTS_ID || `Shapefile ${parseInt(selectedIndex) + 1}`;
+
+                            try {
+                                currentLayer = L.geoJSON(selectedFeature, {
+                                    style: function() {
+                                        return {
+                                            color: '#0141ab',
+                                            weight: 2,
+                                            fillColor: '#0141ab',
+                                            fillOpacity: 0.2
+                                        };
+                                    }
+                                }).addTo(map);
+                            
+                                if (currentLayer.getBounds) {
+                                    let bounds = currentLayer.getBounds();
+                                    if (bounds.isValid()) {
+                                        map.fitBounds(bounds, {
+                                            padding: [50, 50],
+                                            maxZoom: 12
+                                        });
+                                    }
+                                }
+
+                                // If this is the first time adding a layer, create the custom pane
+                                if (!map.getPane('regions')) {
+                                    map.createPane('regions');
+                                    map.getPane('regions').style.zIndex = 100;  // Set low z-index for the pane
+                                }
+                                
+                                if (currentLayer.getBounds) {
+                                    // Enable TIFF layer buttons
+                                    document.querySelectorAll('.layer-box .plus').forEach(function(plusButton) {
+                                        plusButton.disabled = false;
+                                        plusButton.classList.remove('disabled');
+                                    });
+                                }
+                            } catch (error) {
+                                console.error('Error creating GeoJSON layer:', error);
+                            }
+
+                            // Check if we're in the other-data tab and update plot
+                            if (document.getElementById('other-data').classList.contains('tab-selected')) {
+                                fetchDataFrame(selectedLabel);
+                                fetchPlot(selectedLabel);
+                            }
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching GeoJSON:', error));
+            
+             // Add variable to track CORINE layer
+            var corineLayer = null;
+
+            // Add click handler for CORINE shape select button
+            document.getElementById('corine-shape-select').addEventListener('click', function() {
+                // Remove existing CORINE layer if it exists
+                if (corineLayer && map.hasLayer(corineLayer)) {
+                    map.removeLayer(corineLayer);
+                }
+
+                fetch(`/get_corine_shape?region=${encodeURIComponent(selectedLabel)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            console.error('Server error:', data.error);
+                            return;
+                        }
+
+                        corineLayer = L.geoJSON(data, {
+                            style: function() {
+                                return {
+                                    color: '#2b8a3e',  // Dark green for forests
+                                    weight: 1,
+                                    fillColor: '#2b8a3e',
+                                    fillOpacity: 0.4,
+                                    zIndex: 200
+                                };
+                            },
+                            pane: 'corine'
+                        }).addTo(map);
+
+                        // If no other layers are showing bounds, zoom to CORINE layer
+                        if (!currentLayer) {
+                            map.fitBounds(corineLayer.getBounds(), {
+                                padding: [50, 50],
+                                maxZoom: 12
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error fetching CORINE data:', error));
+            });
+
+            // TIFF layer handling
+            document.querySelectorAll('.layer-box .plus').forEach(function(plusButton) {
+                plusButton.disabled = true;
+                plusButton.classList.add('disabled');
+                plusButton.addEventListener('click', function() {
+                    if (this.disabled) return;
+
+                    // Check if a region is selected
+                    if (!selectedLabel) {
+                        console.error('Please select a region first');
+                        return;
+                    }
+
+                    var layerId = this.closest('.layer-container').id;
+                    var monthSelect = document.getElementById('month-select');
+                    var [year, month] = monthSelect.value.split('-');
+                
+                    fetch(`/add_tiff/${layerId}?year=${year}&month=${month}&region=${encodeURIComponent(selectedLabel)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                if (currentTiffLayer) {
+                                    map.removeLayer(currentTiffLayer);
+                                    currentTiffLayer = null;
+                                }
+                                console.error(data.error);
+                                return;
+                            }
+
+                            fetch(data.tiff_url)
+                                .then(response => response.arrayBuffer())
+                                .then(arrayBuffer => {
+                                    parseGeoraster(arrayBuffer, { noDataValue: -9999 }).then(georaster => {
+                                        if (currentTiffLayer) {
+                                            map.removeLayer(currentTiffLayer);
+                                        }
+
+                                        currentTiffLayer = new GeoRasterLayer({
+                                            georaster: georaster,
+                                            opacity: 1,
+                                            zIndex: 300,
+                                            pane: 'tiff',
+                                            pixelValuesToColorFn: values => {
+                                                var value = values[0];
+                                                if (value === georaster.noDataValue || value === null || isNaN(value)) {
+                                                    return 'rgba(0,0,0,0)';
+                                                }
+                                                var scaledValue = (value - georaster.mins[0]) / (georaster.ranges[0]);
+                                                var red = Math.min(255, Math.max(0, 255 * (1 - scaledValue)));
+                                                var green = Math.min(255, Math.max(0, 255 * scaledValue));
+                                                return `rgba(${red}, ${green}, 0, 1)`;
+                                            }
+                                        }).addTo(map);
+                                    });
+                                });
+                        })
+                        .catch(error => console.error('Error loading TIFF:', error));
+                });
+            });
+
+            // Month navigation functionality
+            const monthSelect = document.getElementById('month-select');
+            const prevMonthBtn = document.getElementById('prev-month');
+            const nextMonthBtn = document.getElementById('next-month');
+
+            function updateMonth(direction) {
+                const currentDate = new Date(monthSelect.value + '-01');
+                currentDate.setMonth(currentDate.getMonth() + direction);
+
+                const year = currentDate.getFullYear();
+                const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+                const newValue = `${year}-${month}`;
+
+                if (newValue >= monthSelect.min && newValue <= monthSelect.max) {
+                    monthSelect.value = newValue;
+                
+                    // Update plots if we're in the plot view
+                    if (document.getElementById('other-data').classList.contains('tab-selected') && selectedLabel) {
+                        fetchDataFrame(selectedLabel);
+                        fetchPlot(selectedLabel);
+                    }
+
+                    // Update TIFF layer if it exists and we have a selected region
+                    if (selectedLabel && currentTiffLayer && map.hasLayer(currentTiffLayer)) {
+                        const activeLayerButton = document.querySelector('.plus.active');
+                        if (activeLayerButton) {
+                            const layerId = activeLayerButton.closest('.layer-container').id;
+                            updateTiffLayer(layerId, year, month, selectedLabel);
+                        }
+                    }
+                }
+            }
+
+            function updateTiffLayer(layerId, year, month, region) {
+                // Remove existing TIFF layer
+                if (currentTiffLayer && map.hasLayer(currentTiffLayer)) {
+                    map.removeLayer(currentTiffLayer);
+                    currentTiffLayer = null;
+                }
+            
+                // Load new TIFF layer
+                loadTiffLayer(layerId, year, month, region);
+            }
+            
+            function loadTiffLayer(layerId, year, month, region) {
+                console.log(`Loading TIFF for ${layerId}, ${year}-${month}, region: ${region}`);
+
+                fetch(`/add_tiff/${layerId}?year=${year}&month=${month}&region=${encodeURIComponent(region)}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.error) {
+                            console.error('Server error:', data.error);
+                            throw new Error(data.error);
+                        }
+                        console.log('TIFF URL:', data.tiff_url);
+                        return fetch(data.tiff_url);
+                    })
+                    .then(response => response.arrayBuffer())
+                    .then(arrayBuffer => parseGeoraster(arrayBuffer, { noDataValue: -9999 }))
+                    .then(georaster => {
+                        currentTiffLayer = new GeoRasterLayer({
+                            georaster: georaster,
+                            opacity: 1,
+                            zIndex: 300,
+                            pane: 'tiff',
+                            pixelValuesToColorFn: values => {
+                                const value = values[0];
+                                if (value === georaster.noDataValue || value === null || isNaN(value)) {
+                                    return 'rgba(0,0,0,0)';
+                                }
+                                const scaledValue = (value - georaster.mins[0]) / (georaster.ranges[0]);
+                                const red = Math.min(255, Math.max(0, Math.round(255 * (1 - scaledValue))));
+                                const green = Math.min(255, Math.max(0, Math.round(255 * scaledValue)));
+                                return `rgba(${red}, ${green}, 0, 1)`;
+                            }
+                        }).addTo(map);
+                        console.log('TIFF layer added successfully');
+                    })
+                    .catch(error => {
+                        console.error('Error updating TIFF layer:', error);
+                        const activeLayerButton = document.querySelector('.plus.active');
+                        if (activeLayerButton) {
+                            activeLayerButton.classList.remove('active');
+                        }
+                    });
+            }
+
+            prevMonthBtn.addEventListener('click', () => updateMonth(-1));
+            nextMonthBtn.addEventListener('click', () => updateMonth(1));
+           
+        
+            // Tab switching logic
+            const tabs = document.querySelectorAll('.tab-list li');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const mapContainer = document.getElementById('map');
+            const plotContainer = document.getElementById('plot-container');
+            const sidepanel = document.getElementById('sidepanel');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.remove('tab-selected'));
+                    this.classList.add('tab-selected');
+
+                    const mapContainer = document.getElementById('map');
+                    const plotContainer = document.querySelector('.plot-container');
+
+                    if (this.id === 'other-data') {
+                        // Hide map, show plot container
+                        mapContainer.style.display = 'none';
+                        plotContainer.style.display = 'block';
+
+                        // If we have a selected region, fetch and display the plot
+                        if (selectedLabel) {
+                            fetchDataFrame(selectedLabel);
+                            fetchPlot(selectedLabel);
+                        }
+                    } else {
+                        // Show map, hide plot container
+                        mapContainer.style.display = 'block';
+                        plotContainer.style.display = 'none';
+                    }
+                });
+            });
+
+            // Add month select change listener
+            monthSelect.addEventListener('change', function() {
+                // Update plots if we're in the plot view
+                if (document.getElementById('other-data').classList.contains('tab-selected') && selectedLabel) {
+                    fetchDataFrame(selectedLabel);
+                    fetchPlot(selectedLabel);
+                }
+
+                // Update TIFF layer if it exists
+                if (currentTiffLayer && map.hasLayer(currentTiffLayer)) {
+                    const activeLayerButton = document.querySelector('.plus.active');
+                    if (activeLayerButton) {
+                        activeLayerButton.click(); // Re-trigger the layer loading
+                    }
+                }
+            });
+
+            // If we're in the other-data tab, update the plot
+            if (document.getElementById('other-data').classList.contains('tab-selected')) {
+                console.log('Updating plot for new region:', selectedLabel);
+                fetchDataFrame(selectedLabel);
+                fetchPlot(selectedLabel);
+            }
+            
+        });
+    </script>
+    <div id="plot-container" class="plot-container" style="position: absolute; left: 20%; top: 0; right: 0; bottom: 0; display: none;">
+        <!-- Grid container for plots -->
+            {% include 'index_plot_grid.html' %}
+    </div>
+</body>
+</html>

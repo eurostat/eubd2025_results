@@ -1,0 +1,8 @@
+[default]
+host_base = https://s3.waw3-2.cloudferro.com
+host_bucket = https://s3.waw3-2.cloudferro.com
+access_key = removed key
+secret_key = removed key
+human_readable_sizes = False
+use_https = true
+check_ssl_certificate = true

@@ -1,0 +1,47 @@
+---
+author: "Team 05 - Örebro University"
+format: html
+theme: lux
+page-layout: full
+viewer: true
+scroll-smooth: true
+bibliography: references.bib
+---
+
+# Introduction
+
+Deforestation significantly impacts ecosystem health, reducing vegetation cover and altering chlorophyll levels. The Normalized Difference Vegetation Index (NDVI) and Terrestrial Chlorophyll Index (OTCI) provide valuable insights into these changes by measuring vegetation density and chlorophyll content, respectively. While NDVI has been used to assess vegetation loss, OTCI offers a complementary perspective on thel state of remaining plant life. This study aims to correlate NDVI and OTCI in deforested areas, exploring how vegetation loss influences chlorophyll dynamics and evaluating the potential of OTCI as an additional indicator of forest degradation.
+
+# Background
+
+The Normalized Difference Vegetation Index (NDVI) was introduced in the early 1970s by Rouse et al. (1973), who presented it as a tool for monitoring vegetation in early satellite missions. A similar concept had been proposed earlier by Kriegler et al. (1969), but NDVI became the most widely adopted and remains in use today. NDVI quantifies vegetation health and density by comparing the reflectance of near-infrared and red light. These observations and images are publicly accessible through the Copernicus Browser using Sentinel-2 data [@rouse1974].
+
+The Terrestrial Chlorophyll Index (OTCI) was introduced in 2020 as a continuation of the chlorophyll monitoring capabilities of the Medium Resolution Imaging Spectrometer (MERIS), utilizing Sentinel-3 data. It estimates chlorophyll content by analyzing red reflectance characteristics of a specific area. It is important to note that some OTCI images obtained from Sentinel-3 sometimes have missing pixels, which means that the chlorophyll concentration does not meet the threshold value to be captured and exhibited in the image [@pastor-guzman2020].
+
+## INTERPRETATION
+
+NDVI ratio The NDVI ratio measures, in this case, the extent of an impacted area that has burned. A low NDVI ratio indicates that a significant portion of the forest has burned down. It can take any real number as a possible value, but if it exceeds 1, it suggests forest growth. Therefore, when analyzing forest fires, the NDVI ratio should never be greater than 1. In some cases, the NDVI ratio can be negative, particularly when applied to water bodies, as NDVI values for water are typically negative. However, negative values are rare when applied to land.
+
+$$
+\text{NDVI Ratio}= \frac{\text{NDVI After}}{\text{NDVI Before}}
+$$
+
+OTCI ratio The OTCI ratio measures the change in average chlorophyll content detected by OTCI between two time points. It can take any positive value, though in practice, it rarely exceeds 10, except in cases where the initial area had an extremely low chlorophyll output that could still be detected by Sentinel-3. A ratio of 1 means that the forest, after the analyzed event, has the same average chlorophyll output as it did in the previous time period (measured over two weeks before and after the event). An OTCI ratio lower than 1 indicates a decrease in the forest’s average chlorophyll output. In the case of a forest fire, this suggests that either: the fire primarily burned the healthiest parts of the forest, or the fire damaged the chlorophyll output but did not fully destroy all affected areas.
+
+$$
+\text{OTCI Ratio}= \frac{\text{OTCI After}}{\text{OTCI Before}}
+$$
+
+# Description
+
+The Normalized Difference Vegetation Index (NDVI) is a measure calculated from Sentinel-2 data. To measure this index, the bands B8 (NIR-near infrared) and B4 (red) are used. It quantifies green vegetation in a selected area. The range for this index is between -1 and 1, where negative 1 represents water and 1 represents extremely dense forests.
+
+The Terrestrial Chlorophyll Index (OTCI) is a measure calculated from Sentinel-3 data. This index is used to measure the health of the vegetation in a selected area.
+
+The indicators we calculate are ratios of both the before and after values of NDVI and OTCI of an area affected by rapid thorough deforestation. For this, we average the mean values of two weeks prior and post the event and analyse the result afterwards.
+
+# Tools used:
+
+Python
+
+Copernicus browser

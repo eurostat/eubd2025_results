@@ -1,0 +1,9 @@
+*/*.ipynb_checkpoints/
+*/*.pyc
+*/*.grib
+.vscode
+.venv
+.env
+app/__pycache__/*
+*/*__pycache__
+*/*cpy

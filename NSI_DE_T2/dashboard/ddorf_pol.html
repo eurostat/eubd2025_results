@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EU Quality of Life Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/gridviz"></script>
+    <script src="gridviz-parquet.js"></script>
+</head>
+<body>
+    <div id="map" style="height: 500px; width: 800px; border: 1px solid black;"></div>
+
+    <script>
+        var global_x = 0
+        var globl_y = 0
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // create Gridviz Map 
+            const map = new gridviz.Map(document.getElementById("map"), {
+                x: 4090000,
+                y: 3150000,
+                z: 90
+            }).addZoomButtons().addFullscreenButton();
+
+            // Check, if gridvis-parquet is loaded 
+            if (typeof gviz_par === "undefined") {
+                console.error("❌ gviz_par ist not available!");
+                return;
+            }
+
+
+            //legacy code: actually multi resolution is not needed here
+            const dataset = new gridviz.MultiResolutionDataset(
+                [1000],
+                resolution => new gviz_par.ParquetGrid(map, "data/pm_due_last.parquet", resolution)
+            )
+
+           // Define color for each cell based on PM values (Pure Red Scale)
+            const colorFunction = (cell, resolution) => {
+                const pmValue = cell.pollution; // PM value (between 5 and 14)
+
+                if (pmValue === null || pmValue === undefined) return "#7D7D7D"; // Gray for missing values
+
+                // Pure red scale from light red (low values) to dark red (high values)
+                if (pmValue <= 5.3) return "#e6f2ff";  // White
+                else if (pmValue <= 5.8) return "#ffebe6";  // Very light red
+                else if (pmValue <= 6.3) return "#ffc8c2";  // Light red
+                else if (pmValue <= 6.8) return "#ff9f9f";  // Slightly stronger red
+                else if (pmValue <= 7.3) return "#ff7575";  // Medium red
+                else if (pmValue <= 7.8) return "#ff4c4c";  // Rich red
+                else if (pmValue <= 8.3) return "#ff2222";  // Intense red
+                else if (pmValue <= 8.8) return "#cc0000";  // Darker red
+                else if (pmValue <= 9.3) return "#990000";  // Very dark red
+                else if (pmValue <= 9.8) return "#800000";  // Almost dark red
+                else return "#660000";  // Deep dark red for highest values
+
+            };
+
+            // define grid style
+            const style = new gridviz.ShapeColorSizeStyle(
+                { 
+                    color: colorFunction,
+                    alpha: (z) => (z < 70 ? 0.7 : 1.0),
+                    blendOperation: (z) => 'multiply' 
+                });
+
+            const backgroundLayer = new gridviz.BackgroundLayerWMS({
+                url: 'https://ows.terrestris.de/osm/service?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=OSM-WMS&STYLES=&FORMAT=image/jpeg&TRANSPARENT=false&SRS=EPSG:3035',
+            })
+
+            // add layer to the map
+            map.layers = [
+                backgroundLayer,
+                new gridviz.GridLayer(dataset, [style], {
+                    cellInfoHTML: (c) => {
+                        if (c.pollution === -2) {
+                            return "<b>No population</b>"; 
+                        } else {
+                            const pollutionValue = c.pollution.toFixed(1);
+                            global_x = c.x;
+                            global_y = c.y;
+                            return `<b>${pollutionValue}</b> mean pm2 concentration per km² `; 
+                        }
+                    }
+                })
+            ];
+
+            // register mouse click event
+            document.getElementById("map").addEventListener("click", function (event) {
+                window.parent.postMessage({ action: "mouseDown", x: global_x, y: global_y }, "*");
+            });
+        });
+    </script>
+</body>
+</html>

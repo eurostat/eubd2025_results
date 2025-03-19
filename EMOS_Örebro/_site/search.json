@@ -1,0 +1,16 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Introduction",
+    "section": "",
+    "text": "Deforestation significantly impacts ecosystem health, reducing vegetation cover and altering chlorophyll levels. The Normalized Difference Vegetation Index (NDVI) and Terrestrial Chlorophyll Index (OTCI) provide valuable insights into these changes by measuring vegetation density and chlorophyll content, respectively. While NDVI has been used to assess vegetation loss, OTCI offers a complementary perspective on thel state of remaining plant life. This study aims to correlate NDVI and OTCI in deforested areas, exploring how vegetation loss influences chlorophyll dynamics and evaluating the potential of OTCI as an additional indicator of forest degradation."
+  },
+  {
+    "objectID": "index.html#interpretation",
+    "href": "index.html#interpretation",
+    "title": "Introduction",
+    "section": "INTERPRETATION",
+    "text": "INTERPRETATION\nNDVI ratio The NDVI ratio measures, in this case, the extent of an impacted area that has burned. A low NDVI ratio indicates that a significant portion of the forest has burned down. It can take any real number as a possible value, but if it exceeds 1, it suggests forest growth. Therefore, when analyzing forest fires, the NDVI ratio should never be greater than 1. In some cases, the NDVI ratio can be negative, particularly when applied to water bodies, as NDVI values for water are typically negative. However, negative values are rare when applied to land.\n\\[\n\\text{NDVI Ratio}= \\frac{\\text{NDVI After}}{\\text{NDVI Before}}\n\\]\nOTCI ratio The OTCI ratio measures the change in average chlorophyll content detected by OTCI between two time points. It can take any positive value, though in practice, it rarely exceeds 10, except in cases where the initial area had an extremely low chlorophyll output that could still be detected by Sentinel-3. A ratio of 1 means that the forest, after the analyzed event, has the same average chlorophyll output as it did in the previous time period (measured over two weeks before and after the event). An OTCI ratio lower than 1 indicates a decrease in the forest’s average chlorophyll output. In the case of a forest fire, this suggests that either: the fire primarily burned the healthiest parts of the forest, or the fire damaged the chlorophyll output but did not fully destroy all affected areas.\n\\[\n\\text{OTCI Ratio}= \\frac{\\text{OTCI After}}{\\text{OTCI Before}}\n\\]"
+  }
+]

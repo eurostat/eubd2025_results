@@ -1,0 +1,12 @@
+@media (max-width: 767px) {
+    .responsive-map {
+        height: 50vh !important; /* Snížení výšky na mobilu */
+        max-height: 500px; /* Zamezení příliš velké výšky */
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .responsive-map {
+        height: 60vh !important; /* Střední výška pro tablety */
+    }
+}

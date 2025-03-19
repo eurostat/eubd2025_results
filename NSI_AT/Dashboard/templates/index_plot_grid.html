@@ -1,0 +1,141 @@
+<body>
+    <div class="plot-grid">
+        <!-- Upper half with two equal plots -->
+        <div class="upper-plots">
+            <div id="plotContainer1">
+                <!-- Placeholder for the table -->
+            </div>
+            <div id="plotContainer2" alt="Future stress indicator">
+            </div>
+        </div>
+        <!-- Lower half with single plot -->
+        <div id="tableContainer">
+            <!-- Table data will be loaded here by the fetchDataFrame function -->
+        </div>
+    </div>
+    <script>
+        function fetchPlot(region) {
+            if (!region) {
+                console.error('No region selected');
+                return;
+            }
+
+            const plotContainer = document.getElementById('plotContainer1');
+            const monthSelect = document.getElementById('month-select');
+            const [year, month] = monthSelect.value.split('-');
+            plotContainer.innerHTML = '<p>Loading plot...</p>';
+            console.log('Fetching plot for region:', region);
+            console.log('Fetching plot for region:', region);
+        
+            fetch(`/get_timeline_plot?region=${encodeURIComponent(region)}&month=${month}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const imageUrl = URL.createObjectURL(blob);
+                    const img = new Image();
+
+                    img.onload = () => {
+                        console.log('Image loaded successfully');
+                        plotContainer.innerHTML = '';
+                        plotContainer.appendChild(img);
+                    };
+
+                    img.onerror = (e) => {
+                        console.error('Error loading image:', e);
+                        plotContainer.innerHTML = '<p class="error">Error displaying plot</p>';
+                    };
+
+                    img.src = imageUrl;
+                    img.style.width = '100%';
+                    img.style.height = 'auto';
+                    img.alt = 'Timeline Plot';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    plotContainer.innerHTML = `<p class="error">Error loading plot: ${error.message}</p>`;
+                });
+        }
+
+
+        function initTableSorting() {
+            const table = document.querySelector('.data');
+            if (!table) return;
+                
+            const headers = table.querySelectorAll('th');
+            headers.forEach(header => {
+                header.addEventListener('click', () => {
+                    const column = Array.from(header.parentNode.children).indexOf(header);
+                    const isAsc = header.classList.contains('sort-asc');
+                    
+                    // Remove sort classes from all headers
+                    headers.forEach(h => {
+                        h.classList.remove('sort-asc', 'sort-desc');
+                    });
+                    
+                    // Add appropriate sort class
+                    header.classList.add(isAsc ? 'sort-desc' : 'sort-asc');
+                    
+                    // Sort the table
+                    const tbody = table.querySelector('tbody');
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+                    
+                    const sortedRows = rows.sort((a, b) => {
+                        const aValue = a.children[column].textContent.trim();
+                        const bValue = b.children[column].textContent.trim();
+                        
+                        // Check if values are numbers
+                        const aNum = parseFloat(aValue);
+                        const bNum = parseFloat(bValue);
+                        
+                        if (!isNaN(aNum) && !isNaN(bNum)) {
+                            return isAsc ? aNum - bNum : bNum - aNum;
+                        }
+                        
+                        return isAsc ? 
+                            aValue.localeCompare(bValue) : 
+                            bValue.localeCompare(aValue);
+                    });
+                    
+                    // Clear and re-append sorted rows
+                    tbody.innerHTML = '';
+                    sortedRows.forEach(row => tbody.appendChild(row));
+                });
+            });
+        }
+
+        function fetchDataFrame(region) {
+            if (!region) {
+                console.error('No region selected');
+                return;
+            }
+
+            const plotContainer = document.getElementById('tableContainer');
+            const monthSelect = document.getElementById('month-select');
+            const [year, month] = monthSelect.value.split('-');
+            plotContainer.innerHTML = '<p>Loading data...</p>';
+
+            fetch(`/get_dataframe?region=${encodeURIComponent(region)}&month=${month}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    if (!data.trim()) {
+                        throw new Error('Received empty response');
+                    }
+                    plotContainer.innerHTML = data;
+                    initTableSorting();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    plotContainer.innerHTML = `<p class="error">Error loading data: ${error.message}</p>`;
+                });
+        }        
+    </script>
+</body>
