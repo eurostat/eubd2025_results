@@ -1,0 +1,330 @@
+---
+title: "Hackathon"
+author: "Best"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(plm)
+library(splm)
+library(sp)
+library(maps)
+library(sf)
+library(mapview)
+library(stargazer)
+library(spdep)
+library(ncdf4)
+library(stars)
+library(dplyr)
+library(tidyr)
+library(spdep)
+library(spatialreg)
+library(terra)
+```
+
+```{r}
+rm(list=ls())
+
+nuts3 <- "DE"
+# FR / DE (One in Germany Vs One in France)
+
+date <- "2021"
+# 2021 / 2023
+
+if (nuts3 == "DE"){
+  world_cover <- "DATA/Grid/grid_full_nuts3germany5km.geojson"
+  # 2021
+}
+if (nuts3 == "FR"){
+  world_cover <- "DATA/Grid/grid_full_nuts3france5km.geojson"
+  # 2021
+}
+
+sent3 <- paste0("DATA/SENTINEL3_SLSTR_",nuts3,"_",date,"_mi_Aug.nc")
+
+sent2 <- paste0("DATA/SENTINEL2_L2A_",nuts3,"_",date,"_mi_Aug.nc")
+```
+
+```{r}
+# Importation des données
+world_cover <- st_read(world_cover)
+world_cover <- st_transform(world_cover, crs = 4326)
+
+sent3 <- rast(sent3)
+sent3 <- aggregate(sent3, fact = 3, fun = mean)
+sent3 <- as.points(sent3, values = TRUE)
+sent3 <- st_as_sf(sent3)
+sent3 <- st_transform(sent3, crs=4326)
+colnames(sent3) <- c("temperature", "geometry")
+sent3 <- sent3 %>% 
+  mutate(temperature = temperature - 273.15)
+
+sent2 <- rast(sent2)
+sent2 <- aggregate(sent2, fact = 200, fun = mean)
+sent2 <- as.points(sent2, values = TRUE)
+sent2 <- st_as_sf(sent2)
+sent2 <- st_transform(sent2, crs=4326)
+colnames(sent2) <- c("B8A", "B11", "B04" ,"B08", "geometry")
+
+sent2 <- sent2 %>%
+  mutate(
+    Moisture_Index = (B8A - B11) / (B8A + B11),
+    NDVI = (B08 - B04) / (B08 + B04)
+  ) %>% select(-c(B8A, B11, B04, B08))
+```
+
+```{r warning=FALSE}
+
+# See if its all right
+# mapview(sent3) + mapview(world_cover)
+# mapview(sent2) + mapview(world_cover)
+
+data <- world_cover %>%
+  filter(st_within(world_cover, st_convex_hull(st_union(sent3)), sparse = FALSE))
+
+# mapview(sent3) + mapview(data)
+```
+
+```{r warning=FALSE}
+mini <- st_intersection(data, sent3)
+
+mini <- mini %>%
+  group_by(GRD_ID) %>%
+  summarize(temperature = mean(temperature, na.rm = TRUE))
+
+data <- data %>%
+  left_join(st_drop_geometry(mini), by = "GRD_ID")
+
+mini <- st_intersection(data, sent2)
+
+mini <- mini %>%
+  group_by(GRD_ID) %>%
+  summarize(moisture_index = mean(Moisture_Index, na.rm = TRUE),
+            ndvi = mean(NDVI, na.rm = TRUE)
+            )
+
+data <- data %>%
+  left_join(st_drop_geometry(mini), by = "GRD_ID")
+
+save(data, file = paste0("Rdata/data_", nuts3 ,"_", date ,".Rdata"))
+```
+
+```{r}
+data <- get(load(paste0("Rdata/data_", nuts3 ,"_", date ,".Rdata"))) %>% 
+  mutate(TOT_P = TOT_P_2021)
+# summary(data)
+# mapview(data)
+```
+
+```{r}
+variables <- data.frame(data$TOT_P,  data$agriculture_share,
+                        data$temperature, data$moisture_index, data$ndvi)
+
+stargazer(variables, title = "Statistiques descriptives", summary = TRUE,
+          decimal.mark = ".", digit.separator = "", label = "tab:stats",
+          align = TRUE, header = FALSE, type = "text")
+
+```
+
+```{r}
+model <- agriculture_share~TOT_P+temperature+moisture_index+ndvi
+
+data.nb <- poly2nb(data)
+data.lw <- nb2listw(data.nb)
+
+str(data.lw, max.level = 1)
+```
+
+```{r}
+### Model OLS
+data.lm <- lm(model, data=data)
+data$residus <- residuals(data.lm)
+
+summary(data.lm)
+
+### Moran test on residuals
+lm.morantest(data.lm, data.lw)
+
+### Test LM-Error et LM-Lag
+lm.RStests(data.lm,data.lw,test="all")
+
+### (SEM, Spatial Error Model) : Y= X·β + u et u = λ·Wu + ε)
+data.sem <- errorsarlm(model, data=data, data.lw)
+summary(data.sem)
+
+### Test d’Hausman
+Hausman.test(data.sem)
+
+### (SAR, Spatial AutoRegression) : Y= ρ·WY + X·β + ε
+data.sar <- lagsarlm(model, data=data, data.lw)
+summary(data.sar)
+
+### SDM  Y= ρ·WY + X·β +WX·θ + ε
+data.sardm <- lagsarlm(model, data=data, data.lw, type="mixed")
+summary(data.sardm)
+```
+
+```{r}
+data_new <- get(load(paste0("Rdata/data_", nuts3 ,"_2023.Rdata"))) %>% 
+  mutate(TOT_P = TOT_P_2021 * 1.0101253)
+
+data <- get(load(paste0("Rdata/data_", nuts3 ,"_", date ,".Rdata"))) %>% 
+  mutate(TOT_P = TOT_P_2021, residus = residuals(data.lm))
+
+vars <- all.vars(model)
+data_new <- data_new[, vars]
+
+predictions <- predict(data.sar, data_new, data.lw)
+
+data_new$agriculture_share_predict <- pmax(0, as.numeric(predictions))
+
+data_new$ecart_agriculture_share <- data_new$agriculture_share_predict - data_new$agriculture_share
+
+map <- mapview(data_new, zcol = "ecart_agriculture_share", 
+               col.regions = colorRampPalette(c("red", "white", "green"))(100), 
+               legend = TRUE, layer.name = "Agricultural land share gap 2023 - 2021",
+               map.types ="CartoDB.Positron")
+
+map
+mapshot(map, file = "Map/ecart_agriculture_share_map.png", vwidth = 800, vheight = 600)
+
+library(ggplot2)
+
+df_mean <- data_new %>% st_drop_geometry() %>% 
+  summarise(
+    agriculture_share_mean = mean(agriculture_share, na.rm = TRUE),
+    agriculture_share_predict_mean = mean(agriculture_share_predict, na.rm = TRUE)
+  ) %>%
+  pivot_longer(cols = everything(), names_to = "variable", values_to = "mean_value")
+
+plot <- ggplot(df_mean, aes(x = variable, y = mean_value, fill = variable)) + 
+  geom_bar(stat = "identity", color = "black", size = 1, show.legend = FALSE, width = 0.3) +  # Contour noir
+  scale_fill_manual(values = c("agriculture_share_mean" = "#1F77B4", "agriculture_share_predict_mean" = "#FF7F0E")) +  # Couleurs personnalisées
+  theme_bw() + 
+  labs(x = "", y = "Mean", title = "Mean Shares of Agricultural Land (2021) and Predicted (2023)") +  # Texte en anglais
+  scale_x_discrete(labels = c("agriculture_share_mean" = "Agricultural land share (2021)", 
+                              "agriculture_share_predict_mean" = "Predicted agricultural land share (2023)")) +  # Renommage des valeurs X
+  theme(
+    axis.title = element_text(size = 14, face = "bold"),  # Taille et style des titres
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),  # Titre du plot centré
+    axis.text.x = element_text(angle = 0, size = 12, face = "bold"),  # Texte de l'axe X en gras
+    axis.text.y = element_text(size = 12)  # Ajuste la taille des labels de l'axe Y
+  )
+plot
+ggsave("Map/mean_agriculture_shares.png", plot, width = 8, height = 6, dpi = 300)
+```
+
+
+```{r}
+# Extraction des valeurs pour chaque modèle
+lambda_value <- data.sem$lambda
+lambda_se <- data.sem$lambda.se  
+lambda_pval <- 2 * (1 - pnorm(abs(lambda_value / lambda_se)))  
+
+rho_sar_value <- data.sar$rho
+rho_sar_se <- data.sar$rho.se  
+rho_sar_pval <- 2 * (1 - pnorm(abs(rho_sar_value / rho_sar_se)))  
+
+rho_sardm_value <- data.sardm$rho
+rho_sardm_se <- data.sardm$rho.se  
+rho_sardm_pval <- 2 * (1 - pnorm(abs(rho_sardm_value / rho_sardm_se)))  
+
+aic_ols <- AIC(data.lm)
+aic_sem <- AIC(data.sem)
+aic_sar <- AIC(data.sar)
+aic_sardm <- AIC(data.sardm)
+```
+
+
+```{r warning=FALSE}
+mod.list <- list(data.lm, data.sem, data.sar, data.sardm)
+stargazer(mod.list, 
+          type = "text",
+          header = FALSE, 
+          model.names = F,
+          title = "",
+          add.lines = list(
+            c("Lambda", "", sprintf("%.3f", lambda_value), "", ""),
+            c("Std. Error (Lambda)", "", sprintf("%.3f", lambda_se), "", ""),
+            c("p-value (Lambda)", "", sprintf("%.3f", lambda_pval), "", ""),
+            c("Rho", "", "", sprintf("%.3f", rho_sar_value), sprintf("%.3f", rho_sardm_value)),
+            c("Std. Error (Rho)", "", "", sprintf("%.3f", rho_sar_se), sprintf("%.3f", rho_sardm_se)),
+            c("p-value (Rho)", "", "", sprintf("%.3f", rho_sar_pval), sprintf("%.3f", rho_sardm_pval)),
+            c("Akaike Inf. Crit.", sprintf("%.3f", aic_ols), sprintf("%.3f", aic_sem), 
+              sprintf("%.3f", aic_sar), sprintf("%.3f", aic_sardm))
+          ),
+          column.labels = c("OLS", "SEM", "SAR", "SDM"),
+          omit.stat = c("rsq","ser","f", "aic", "ll"))
+```
+
+```{r}
+# Définition de la palette rouge -> blanc -> vert
+palette_residus <- colorRampPalette(c("red", "white", "green"))
+
+# Visualisation avec mapview
+mapview(data, zcol = "residus", col.regions = palette_residus(100))
+```
+
+
+```{r}
+summary(data$residus)
+boxplot(data$residus)
+```
+
+```{r}
+moran.test(data$residus, data.lw, randomisation = TRUE)
+
+moran.plot(
+  as.numeric(data$residus),
+  listw = data.lw,
+  main = "Diagramme de Moran"
+)
+```
+
+
+```{r}
+lisa <- localmoran(data$residus, data.lw)
+str(lisa, max.level=1)
+summary(lisa)
+mean(lisa[,"Ii"])
+
+table(lisa[,"Ii"] > 0)
+
+data$Moran_I <- lisa[, "Ii"]
+data$p_value <- lisa[, "Pr(z != E(Ii))"]
+
+table(data$p_value < 0.05)
+summary(data$p_value)
+
+plot(data["p_value"], breaks = c(0,0.01,0.05,0.1,1))
+```
+
+```{r}
+# Palette rouge-bleu pour les clusters
+palette_moran <- colorRampPalette(c("blue", "white", "red"))
+
+# Carte interactive
+mapview(data, zcol = "Moran_I", col.regions = palette_moran(100))
+```
+
+
+```{r}
+### Modèle SAC
+data.sac <- sacsarlm(model, data=data, data.lw)
+summary(data.sac)
+
+### Modèle SLX
+data.slx <- lmSLX(model, data=data, data.lw)
+summary(data.slx)
+
+### Modèle SDEM
+data.sdem <- errorsarlm(model, data=data, data.lw, etype="emixed")
+summary(data.sdem)
+
+### Modèle Manski
+data.manski <- sacsarlm(model, data=data, data.lw, type="sacmixed")
+summary(data.manski)
+```
+
