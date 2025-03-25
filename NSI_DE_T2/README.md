@@ -14,6 +14,7 @@ Our application focuses on two NUTS-2 regions: DEA1: Germany -Düsseldorf (Germa
 ### Folder structure
 
 The ```dashboard``` folder contains all the code for the dashboard.  There is also a separate ```dashboard/README.md``` file for more information about the dashboard.
+The ```backend``` folder contains the code (jupyter notebook) to calculate the indicators used in the dashboard. 
 
 ### Disclaimer
 
