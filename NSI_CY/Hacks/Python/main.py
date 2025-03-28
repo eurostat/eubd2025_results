@@ -1,11 +1,14 @@
 import pandas as pd
 import os
 import zipfile
+from dotenv import load_dotenv
 
 import geopandas as gpd
 import cdsapi
 import xarray as xr
 import shapefile
+
+load_dotenv()
 
 
 def filter_nuts_3(years):
