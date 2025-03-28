@@ -1,32 +1,4 @@
 
-library(dplyr)
-library(data.table)
-library(sf)
-
-curr_path <- paste0(getwd(),"/")
-hack_path <- paste0(dirname(curr_path),"/")
-data_path <- paste0(hack_path,"Data/")
-home_path <- paste0(dirname(hack_path),"/")
-TAROT_app <- paste0(home_path,"Dashboard_TAROT/")
-
-mapr_path <- paste0(data_path,"MappingFiles_R/")
-live_path <- paste0(data_path,"CDSE_Monthly_R/")
-corln_path <- paste0(data_path,"CDSE_YearCor_R/")
-corrln_reslts <- paste0(data_path,"Results_Corrln/")
-
-dir.create(TAROT_dats <- paste0(TAROT_app,"data/"), showWarnings = FALSE)
-dir.create(TAROT_supp <- paste0(TAROT_app,"data_supp/"), showWarnings = FALSE)
-source(paste0(curr_path,"00_FunctionsUsed.R"))
-
-
-# general_path <- "~/R/00_General/"
-# corr_path <- "~/R/01_Correlation/CorrReslts/"
-# rdata_map <- paste0(general_path,"rdata/mappings/")
-# CopLive_M <- paste0(general_path,"rdata/cams_M13to24/")
-# dir.create(appd_path <- "~/R/02_AppTAROT/data/", showWarnings = FALSE, recursive = TRUE)
-# dir.create(appdsupp_path <- "~/R/02_AppTAROT/data_supp/", showWarnings = FALSE, recursive = TRUE)
-# source(paste0(general_path,"FunctionsUsed.R"))
-
 
 # #################################################################################
 # [A] Import Created .RDS Datasets
@@ -99,6 +71,4 @@ for(f in 1:length(full_paths)){
 }
 saveRDS(myears, paste0(TAROT_supp,"PeriodsInFilter.rds"))
 
-rm(list=ls())
-gc()
 

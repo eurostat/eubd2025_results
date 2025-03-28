@@ -1,21 +1,4 @@
 
-library(dplyr)
-library(data.table)
-library(sf)
-library(eurostat)
-library(giscoR)
-
-curr_path <- paste0(getwd(),"/")
-hack_path <- paste0(dirname(curr_path),"/")
-data_path <- paste0(hack_path,"Data/")
-cdse_path <- paste0(data_path,"CDSE_Monthly/") #  CAMS Reanalysis (2013-2022) and Forecast (2023-2024) Data, downloaded and brought to MONTHLY, NUTS3 level in Python (showing number of dangerous days due to PM2.5)
-
-dir.create(mapr_path <- paste0(data_path,"MappingFiles_R/"), showWarnings = FALSE)
-dir.create(live_path <- paste0(data_path,"CDSE_Monthly_R/"), showWarnings = FALSE)  
-dir.create(corln_path <- paste0(data_path,"CDSE_YearCor_R/"), showWarnings = FALSE)
-
-
-
   
 # #################################################################################
 # [A] Download Eurostat data
@@ -61,9 +44,7 @@ gc()
 
 #   (iii) NUTS3 shapefiles
 # nuts3_publication_years <- c("2003", "2006", "2010", "2013", "2016", "2021")
-nuts3_publication_years <- c("2021")  # Found out the hard way that "demo_r_pjanaggr3" 
-                                      # and "sdg_11_52" only use 2021 NUTS3 regions, even 
-                                      # for years before 2021
+nuts3_publication_years <- c("2021")  
 nuts3_list <- list()
 for(y in 1:length(nuts3_publication_years)){
   year_inner <- nuts3_publication_years[y]
@@ -76,101 +57,12 @@ for(y in 1:length(nuts3_publication_years)){
 nuts3_shapes <- do.call(bind_rows, nuts3_list)
 nuts3_shapes <- dplyr::mutate(nuts3_shapes, area_m2  = as.numeric(sf::st_area(geometry)))
 nuts3_shapes <- dplyr::mutate(nuts3_shapes, area_km2 = as.numeric(area_m2 / 1000000))
-
-# # The following is performed only in case we want to map NUTS3 regions of "demo_r_pjanaggr3"
-# #   and "sdg_11_52" by using the version of the NUTS3 mapping file available at the time. As
-# #   mentioned above, these datasets are mapped using the latest (2021) NUTS3 region mapping,
-# #   even though they display results for year before 2021.
-# #   (e.g.) Population results of year 2016 are published using the 2021 NUTS3 regions in "demo_r_pjanaggr3"
-# #           (even if that version of the NUTS3 file was not available at the time!)
-# if(length(nuts3_publication_years) > 1){
-#   current_year <- lubridate::year(Sys.Date())
-#   years_nuts3 <- as.numeric(nuts3_publication_years)
-#   years_from  <- c(2004, 2008, 2012, 2015, 2018, 2021)
-#   years_until <- c(2007, 2011, 2014, 2017, 2020, current_year)
-#   years_diff <- years_until - years_from + 1
-#   years_diff[length(years_diff)] <- years_diff[length(years_diff)] + 1
-#   nuts3_years_list <- list()
-#   for(d in 1:length(years_diff)){
-#     pub_year <- years_nuts3[d]
-#     frm_years <- years_from[d]
-#     nbr_years <- years_diff[d]
-#     pub_years <- rep(years_nuts3[d], nbr_years)
-#     ppn_years <- frm_years + seq(nbr_years) - 1
-#     pub_ppn_df <- data.frame(
-#       year_doc = as.character(pub_years),
-#       TIME_PERIOD = as.Date(paste0(ppn_years,"-01-01"))
-#     )
-#     nuts3_years_list <- c(list(pub_ppn_df), nuts3_years_list)
-#     rm(d, pub_year, frm_years, nbr_years, pub_years, ppn_years, pub_ppn_df)
-#   }
-#   nuts3_years <- arrange(do.call(bind_rows, nuts3_years_list), TIME_PERIOD)
-#   nuts3_shapes <- left_join(nuts3_shapes, nuts3_years, by = c("year_doc"),relationship = "many-to-many")
-#   rm(current_year, years_nuts3, years_from, years_until, years_diff, nuts3_years_list, nuts3_years)
-# }
-
 # class(nuts3_shapes)
 # sf::st_write(nuts3_shapes, paste0(rdata_path,"NUTS3_Shapefile.gpkg"), delete_dsn = TRUE) # delete_dsn = TRUE overwrites the file.
 # sf::st_write(nuts3_shapes, paste0(rdata_path,"NUTS3_Shapefile.shp"), delete_dsn = TRUE) # delete_dsn = TRUE overwrites the file.
 saveRDS(nuts3_shapes, paste0(mapr_path,"NUTS3_Shapefile.rds"))
 rm(nuts3_list, nuts3_publication_years, nuts3_shapes)
 gc()
-
-
-# #   (iv) Copernicus YEARLY ReAnalysis CAMS Data (for Years 2013-2022)
-# #         Downloaded using Python and show Dangerous Days (PM2.5 > 5) per NUTS3 region
-# s_years <- 2012 + seq(10)
-# s_list <- list()
-# for(s in 1:length(s_years)){
-#   syear <- s_years[s]
-#   copern_inner <- read.csv(paste0(reanal_yearly_path,"summary_stats_",syear,".csv"))
-#   copern_inner <- dplyr::mutate(copern_inner,TIME_PERIOD=as.Date(paste0(syear,"-01-01")))
-#   s_list <- c(s_list, list(copern_inner))
-#   cat("Year: ",syear,"\n")
-#   rm(s,syear,copern_inner)
-# }
-# copern_nuts3 <- arrange(do.call(bind_rows, s_list), TIME_PERIOD)
-# copern_nuts3 <- as.data.table(copern_nuts3)
-# saveRDS(copern_nuts3, paste0(CopRean_Y,"Copernicus_NUTS3_DDays_PMg5.rds"))
-# rm(s_years, s_list, copern_nuts3)
-# gc()
-
-
-#   (v) Copernicus MONTHLY ReAnalysis CAMS Data (for Years 2013-2022)
-#         Downloaded using Python and show Dangerous Days (PM2.5 > 5) per NUTS3 region
-# s_years <- 2012 + seq(10)
-# s_months <- seq(12)
-# s_months_lbl <- sprintf(paste0("%0", 2, "d"), s_months)
-# s_myears <- c()
-# s_myears_lbl <- c()
-# for(y in 1:length(s_years)){
-#   s_myears <- c(s_myears, paste0(s_years[y],"_",s_months) )
-#   s_myears_lbl <- c(s_myears_lbl, paste0(s_years[y],"_",s_months_lbl) )
-#   rm(y)
-# }
-# for(s in 1:length(s_myears_lbl)){
-#   # smyear <- s_myears[s]
-#   smyear_lbl <- s_myears_lbl[s]
-#   copern_inner <- read.csv(paste0(reanal_mnthly_path,"summary_stats_",smyear_lbl,".csv"))
-#   copern_inner <- dplyr::mutate(copern_inner,TIME_PERIOD=as.Date(paste0(substr(smyear_lbl,1,4),"-",substr(smyear_lbl,6,7),"-01")))
-#   
-#   # Correct Dangerous Days from Copernicus (EXCEED_mean) due to one extra day being included in the FORECAST data (first day of the next month)
-#   tper <- unique(copern_inner$TIME_PERIOD)
-#   if(lubridate::year(tper) > 2022){
-#     factor <- lubridate::days_in_month(tper)[[1]]
-#     copern_inner <- mutate(copern_inner, EXCEED_mean=(factor/(factor+1))*EXCEED_mean)
-#     if(max(copern_inner$EXCEED_mean)>factor){
-#       print(paste0("ERROR - Dataset: ",full_paths[f]))
-#     }
-#     rm(factor)
-#   }
-#   copern_inner <- as.data.table(copern_inner)
-#   saveRDS(copern_inner, paste0(CopLive_M,"NDDI_DDays_PMg5_",smyear_lbl,".rds"))
-#   cat("MonthYear: ",smyear_lbl,"\n")
-#   rm(s,smyear_lbl,copern_inner, tper)
-# }
-# rm(s_years, s_months, s_months_lbl, s_myears, s_myears_lbl)
-# gc()
 
 
 #   (iv) Copernicus MONHTLY CAMS Data (ReAnalysis Data for Years 2013-2022 and Forecast Data for Years 2023-2024) 
@@ -227,5 +119,4 @@ saveRDS(copern_yearly, paste0(corln_path,"NDDI_DDays_PMg5_YEARLY.rds"))
 rm(s_years, s_months, s_months_lbl, copern_yearly)
 gc()
 
-rm(list=ls())
-gc()
+

@@ -1,20 +1,4 @@
 
-library(dplyr)
-library(data.table)
-library(sf)
-
-curr_path <- paste0(getwd(),"/")
-hack_path <- paste0(dirname(curr_path),"/")
-data_path <- paste0(hack_path,"Data/")
-
-mapr_path <- paste0(data_path,"MappingFiles_R/")
-live_path <- paste0(data_path,"CDSE_Monthly_R/")
-corln_path <- paste0(data_path,"CDSE_YearCor_R/")
-
-dir.create(corrln_reslts <- paste0(data_path,"Results_Corrln/"), showWarnings = FALSE)
-source(paste0(curr_path,"00_FunctionsUsed.R"))
-
-
 
 # #################################################################################
 # [A] Import Created .RDS Datasets
@@ -106,5 +90,4 @@ print(paste0("Equation of the line: log(Popln_PM25_Rate100k + ",addincr,") = ", 
 CorrEqnCoeffs <- list(s = slope, i=intercept, b=addincr)
 saveRDS(CorrEqnCoeffs,paste0(corrln_reslts,"CorrExpEqnCoeffs_PMg5.rds"))
   
-rm(list=ls())
-gc()
+
