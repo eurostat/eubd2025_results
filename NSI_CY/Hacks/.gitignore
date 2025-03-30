@@ -1,0 +1,13 @@
+.env
+
+/.idea/
+/__pycache__/
+
+
+*.csv
+*.zip
+*.shp
+*.dbf
+*.shx
+*.prj
+*.cpg

@@ -13,14 +13,14 @@ def filter_nuts_3(years):
     nuts_2016 = "NUTS_RG_01M_2016_4326"
     nuts_2021 = "NUTS_RG_01M_2021_4326"
     nuts_names = {
-        "2013": nuts_2013,
-        "2014": nuts_2013,
-        "2015": nuts_2013,
-        "2016": nuts_2016,
-        "2017": nuts_2016,
-        "2018": nuts_2016,
-        "2019": nuts_2016,
-        "2020": nuts_2016,
+        "2013": nuts_2021,
+        "2014": nuts_2021,
+        "2015": nuts_2021,
+        "2016": nuts_2021,
+        "2017": nuts_2021,
+        "2018": nuts_2021,
+        "2019": nuts_2021,
+        "2020": nuts_2021,
         "2021": nuts_2021,
         "2022": nuts_2021,
         "2023": nuts_2021,
@@ -31,8 +31,9 @@ def filter_nuts_3(years):
     nuts = {}
     for year in years:
         nuts_name = nuts_names[str(year)]
-        nuts_path = f"{nuts_name}.shp"
-        nuts_filtered = f"{nuts_name}_filtered.shp"
+        nuts_path = f"nuts/{nuts_name}.shp"
+        nuts_filtered = f"nuts/{nuts_name}_filtered/{nuts_name}_filtered.shp"
+        os.makedirs(f"nuts/{nuts_name}_filtered", exist_ok=True)
 
         filter_shapefile_by_field(nuts_path, nuts_filtered, "LEVL_CODE", 3)
 
@@ -46,15 +47,11 @@ def perform_spatial_analysis(years, months, nuts):
         for month in months:
             shapefile_name = get_shapefile_name(year, month)
             shapefile_path = f"{shapefile_name}.shp"
-            shapefile_projected = f"{shapefile_name}/{shapefile_name}_projected.shp"
-
-            spj_name = f"{shapefile_name}_spj_nuts3"
-            spj_path = f"{spj_name}/{spj_name}.shp"
+            shapefile_projected = f"{shapefile_name}_projected.shp"
+            spj_path = f"{shapefile_name}_spj_nuts3.shp"
 
             output_csv_path = f"summary_stats/summary_stats_{year}_{month}.csv"
 
-            os.makedirs(shapefile_name, exist_ok=True)
-            os.makedirs(spj_name, exist_ok=True)
             os.makedirs("summary_stats", exist_ok=True)
 
             project_to_epsg(shapefile_path, shapefile_projected)
@@ -69,7 +66,9 @@ def perform_spatial_analysis(years, months, nuts):
 
 
 def get_shapefile_name(year, month):
-    return f'cams_exceedance_{year}_{month}'
+    shapefile_name = f'shapefiles/cams_exceedance_{year}_{month}/cams_exceedance_{year}_{month}'
+    os.makedirs('/'.join(shapefile_name.split('/')[:-1]), exist_ok=True)
+    return shapefile_name
 
 
 def project_to_epsg(shapefile_path, shapefile_projected):
@@ -119,14 +118,24 @@ def calculate_exceedance_days_xr(xr_data, pm2p5_threshold, time_dim='time'):
 def create_exceedance_shapefile(exceedance_data, lat, lon, shp_file):
     """Creates a shapefile from the exceedance data."""
     try:
+        exceedance_data = exceedance_data.values
         w = shapefile.Writer(shp_file, shapeType=shapefile.POINT)
         w.field("EXCEED", "N", decimal=0)  # Number of exceedance days (integer)
         w.field("LAT", "F", decimal=10)
         w.field("LON", "F", decimal=10)
 
+        num_dims = len(exceedance_data.shape)  # Get the number of dimensions
         for i in range(len(lat)):
             for j in range(len(lon)):
-                value = exceedance_data[i, j].item()
+                if num_dims == 3:
+                    value = exceedance_data[0, i, j].item()  # Shape (1, lat, lon)
+                elif num_dims == 2:
+                    value = exceedance_data[i, j].item()  # Shape (lat, lon)
+                else:
+                    print(f"Error: Unexpected shape of exceedance_data: {exceedance_data.shape}")
+                    w.close()  # Close the writer to avoid corrupt shapefiles
+                    return False
+
                 w.point(lon[j], lat[i])
                 w.record(int(value), lat[i], lon[j])  # Convert to integer
 
@@ -294,8 +303,8 @@ def get_cams_data(years, months, dataset, pm2p5_threshold=25):
 
             if forecasts:
                 start_date = f"{year}-{month:02}-01"
-                end_year = int(year) + 1 if month == 12 else year
-                end_month = 1 if month == 12 else int(month) + 1
+                end_year = int(year) + 1 if month == "12" else year
+                end_month = 1 if month == "12" else int(month) + 1
                 end_date = f"{end_year}-{end_month:02}-01"
 
                 request.update({
@@ -315,7 +324,8 @@ def get_cams_data(years, months, dataset, pm2p5_threshold=25):
 
             try:
                 result = client.retrieve(dataset, request)
-                zip_file = f"cams_data_{year}_{month}.zip"
+                zip_file = f"downloads/cams_data_{year}_{month}.zip"
+                os.makedirs('downloads', exist_ok=True)
                 result.download(zip_file)
 
                 extraction_path = extract_zip(zip_file)
@@ -360,8 +370,8 @@ def get_cams_data(years, months, dataset, pm2p5_threshold=25):
                 if extraction_path and os.path.exists(extraction_path):
                     import shutil
                     shutil.rmtree(extraction_path)
-                if os.path.exists(zip_file):
-                    os.remove(zip_file)
+                # if os.path.exists(zip_file):
+                #     os.remove(zip_file)
             except Exception as e:
                 print(f"Error retrieving data for {year}-{month}: {e}")
 
