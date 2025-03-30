@@ -1,0 +1,10 @@
+.env
+
+*.csv
+*.shp
+*.shx
+*.zip
+*.dbf
+*.cpg
+*.prj
+
