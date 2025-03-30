@@ -5,3 +5,4 @@ xarray
 pyshp
 netCDF4
 python-dotenv
+zipfile
