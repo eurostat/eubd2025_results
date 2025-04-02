@@ -10,6 +10,12 @@ Open Issues:
 - Optimze map visual to display Small Woody Features
 - Add Backend Infrastructure with Database support to query data directly from Database. 
 
+## Files
+### statistics_woody_features.py
+This script is used to process the data source Small woody features. As the data is quite large we have used only example paths to the data. As an output the script produces aggregated statistics of for the two selected regions in Germany and Austria
+### The remaining scripts
+The rest of the codebase is used to create the python shiny webapp. We serve the data from the www/data folder, which is not versioned. 
+
 ## How to use
 Change directory to NSI_DE_T1
 - cd NSI_DE_T1
