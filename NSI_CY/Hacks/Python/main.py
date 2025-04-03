@@ -12,24 +12,8 @@ load_dotenv()
 
 
 def filter_nuts_3(years):
-    nuts_2013 = "NUTS_RG_01M_2013_4326"
-    nuts_2016 = "NUTS_RG_01M_2016_4326"
     nuts_2021 = "NUTS_RG_01M_2021_4326"
-    nuts_names = {
-        "2013": nuts_2021,
-        "2014": nuts_2021,
-        "2015": nuts_2021,
-        "2016": nuts_2021,
-        "2017": nuts_2021,
-        "2018": nuts_2021,
-        "2019": nuts_2021,
-        "2020": nuts_2021,
-        "2021": nuts_2021,
-        "2022": nuts_2021,
-        "2023": nuts_2021,
-        "2024": nuts_2021,
-        "2025": nuts_2021
-    }
+    nuts_names = {str(year): nuts_2021 for year in range(2013, 2026)}
 
     nuts = {}
     for year in years:
@@ -53,7 +37,9 @@ def perform_spatial_analysis(years, months, nuts):
             shapefile_projected = f"{shapefile_name}_projected.shp"
             spj_path = f"{shapefile_name}_spj_nuts3.shp"
 
-            output_csv_path = f"summary_stats/summary_stats_{year}_{month}.csv"
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            parent_dir = os.path.dirname(script_dir)
+            output_csv_path = os.path.join(parent_dir, f"Data/CDSE_Monthly/summary_stats_{year}_{month}.csv")
 
             os.makedirs("summary_stats", exist_ok=True)
 
@@ -139,8 +125,11 @@ def create_exceedance_shapefile(exceedance_data, lat, lon, shp_file):
                     w.close()  # Close the writer to avoid corrupt shapefiles
                     return False
 
-                w.point(lon[j], lat[i])
-                w.record(int(value), lat[i], lon[j])  # Convert to integer
+                latitude = lat[i]
+                longitude = lon[j] if lon[j] < 180 else lon[j] - 360  # Adjust longitude to be within -180 to 180 degrees
+
+                w.point(longitude, latitude)
+                w.record(int(value), latitude, longitude)
 
         w.close()
         print(f"Successfully created shapefile: {shp_file}")
