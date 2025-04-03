@@ -1,0 +1,31 @@
+services:
+  shiny:
+    build: .
+    depends_on:
+      - postgres
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: shiny_user
+      DB_PASSWORD: shiny_password
+      DB_NAME: shiny_db
+    volumes:
+      - ./appData/shinyData:/srv/shiny-server  # Mount Shiny app files
+      - ./appData/nginx:/etc/nginx/  # Mount NGINX 
+
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: shiny_user
+      POSTGRES_PASSWORD: shiny_password
+      POSTGRES_DB: shiny_db
+    volumes:
+      - ./appData/postgresData:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:

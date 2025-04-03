@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EU Quokka - EU Quality of Life Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        iframe { width: 100%; height: 600px; border: none; }
+        .hero { background: #003399;/*#007bff;*/ color: white; padding: 60px 0; text-align: center; }
+        .content { padding: 40px 20px; }
+        footer { background: #333; color: white; text-align: center; padding: 20px 0; margin-top: 40px; }
+        .logo { max-width: 50px; margin-right: 10px; }
+        .logo2 { max-width: 90px; margin-right: 10px; }
+        .description-text { text-align: center; font-size: 18px; font-weight: bold; margin-top: 20px; }
+        .hidden-section { display: none; margin-top: 30px; }
+        .vis-title {margin-top: 40px;}
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="./data/EU_Quokka_Logo.png" alt="EU Quokka Logo" class="logo">
+                <span>EU Quokka | Eurostat Hackathon 2025, Germany Team 2</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#">Focus Region: Düsseldorf</a></li>
+                    <li class="nav-item"><a class="nav-link" href="dublin_embed.html">Focus Region: Dublin</a></li>
+                    <!-- Option pages not available 
+                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Team</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>-->
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="hero">
+        <h1>EU Quokka <img src="data/EU_Quokka_Logo.png" alt="EU Quokka Logo" class="logo2"> Quality of Life Tracker</h1>
+    </div>
+
+    <div class="container content">
+        <div class="row">
+            <div class="col-md-8">
+                <h2>Focus region - Düsseldorf and surroundings</h2>
+                <iframe id="mapFrame" src="ddorf_veg.html" title="Green Area Map"></iframe>
+            </div>
+            <div class="col-md-4">
+                <label for="dataSelector" class="form-label">Select Data:</label>
+                <select id="dataSelector" class="form-select">
+                    <option value="ddorf_pol.html">Pollution</option>
+                    <option value="ddorf_pop.html">Population</option>
+                    <option value="ddorf_veg.html" selected>Vegetation</option>
+                    <option value="ddorf_veg_capita.html">Vegetation per Capita</option>
+                </select>
+
+                <h2 id="vis-title" class="vis-title">Local Access to Green Areas</h2>
+                <p id="vis-desc">This interactive visualization displays the share of green areas within the 1 km × 1 km grid in 2021. The intensity of the green color represents the proportion of green space in each cell—darker shades indicate a higher share of greenery. Areas that are uninhabited are shown in grey.  </p>
+                
+
+                <div id="chartContainer" class="hidden-section">
+                    <h3>Air Pollution</h3>
+                    <select id="duration_selector" class="form-select">
+                        <option value="6">6 month</option>
+                        <!-- Second option not available -->
+                        <!--<option value="12">12 month</option>-->
+                    </select>
+                    <p>
+                    <p id="pm_chart_desc"></p>
+                    <canvas id="greenAreaChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top:-30px;">
+            <div class="col-md-12 text-center">
+                <p>Here you can download the selected dataset in tabular form as a Parquet file:</p>
+                <a id ="download_data" href="data/duesseldorf_vegetation_min_snappy.parquet" class="btn btn-primary" download>
+                    <i class="fas fa-download"></i> Download selected Data
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 EU Quokka - EU Quality of Life Tracker. All Rights Reserved.</p>
+    </footer>
+    
+    <script>
+        /* Change Elements based on Data selection drop down */
+        document.getElementById('dataSelector').addEventListener('change', function() {
+            document.getElementById('mapFrame').src = this.value;
+            if (this.value == "ddorf_veg.html") {
+                const data_download_button = document.getElementById("download_data");
+                data_download_button.href = "data/duesseldorf_vegetation_min_snappy.parquet";
+                const chartContainer = document.getElementById("chartContainer");
+                chartContainer.style.display = "none"; 
+                const vis_title = document.getElementById("vis-title");
+                vis_title.innerHTML="Local Access to Green Areas";
+                const vis_desc = document.getElementById("vis-desc");
+                vis_desc.innerHTML="This interactive visualization displays the share of green areas within the 1 km × 1 km grid in 2021. The intensity of the green color represents the proportion of green space in each cell—darker shades indicate a higher share of greenery. Areas that are uninhabited are shown in grey.  ";
+            }
+            else if (this.value == "ddorf_pol.html"){
+                const data_download_button = document.getElementById("download_data");
+                data_download_button.href = "data/pm_due_last.parquet";
+                const vis_title = document.getElementById("vis-title");
+                vis_title.innerHTML="Local Particulate Matter Pollution";
+                const vis_desc = document.getElementById("vis-desc");
+                vis_desc.innerHTML="This interactive visualization displays the air pollution as density of fine particles (2.5) in µg/m³ for the month of December in 2021. Please click on a cell to see the development of the value over time.";
+            }
+            else if (this.value == "ddorf_veg_capita.html") {
+                const data_download_button = document.getElementById("download_data");
+                data_download_button.href = "data/ddorf_veg_capita.parquet";
+                const chartContainer = document.getElementById("chartContainer");
+                chartContainer.style.display = "none"; 
+                const vis_title = document.getElementById("vis-title");
+                vis_title.innerHTML="Local Access to Green Areas per Capita";
+                const vis_desc = document.getElementById("vis-desc");
+                vis_desc.innerHTML="This interactive visualization displays km² green space per capita within the 1 km x 1km grid for 2021. The intensity of the green color represents the amount of area of green space one person has potentially available in each cell. The maximum value of 1 represents the whole 1km² being available for the person living there. ";
+            }
+            else {
+                const data_download_button = document.getElementById("download_data");
+                data_download_button.href = "./data/2021_pop_1km_snappy.parquet";
+                const chartContainer = document.getElementById("chartContainer");
+                chartContainer.style.display = "none"; 
+                const vis_title = document.getElementById("vis-title");
+                vis_title.innerHTML="Population";
+                const vis_desc = document.getElementById("vis-desc");
+                vis_desc.innerHTML="This interactive visualization displays the local population within the 1 km × 1 km grid from census 2021. The loading of the data takes some time, because it is whole Europe.";
+            }
+        });
+
+        // Get the mouse click Event from the iframe
+        window.addEventListener("message", (event) => {
+            if (event.data.action === "mouseDown") {
+                showChart(event.data.x, event.data.y);
+            }
+        });
+
+        // Show the Chart based on the mouse click event
+        function showChart(my_x, my_y) {
+            const chartContainer = document.getElementById("chartContainer");
+            chartContainer.style.display = "block"; // displays the container
+
+            const pm_chart_desc = document.getElementById("pm_chart_desc");
+            pm_chart_desc.innerHTML = "Grid-ID: CRS3035RES1000mN"+my_y+"E"+my_x;
+
+            const ctx = document.getElementById("greenAreaChart").getContext("2d"); 
+
+            chart_data = [0,0,0,0,0,0];
+
+            // If Chart already exists, just update the data
+            if (window.greenAreaChart instanceof Chart) {
+                fetchData(my_x,my_y);
+                return;
+            }
+
+            window.greenAreaChart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: ["Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],
+                    datasets: [{
+                        label: "Fine Particulate Matter (PM) Concentration (µg/m³)",
+                        data: chart_data, 
+                        borderColor: "red",
+                        backgroundColor: "rgba(255, 0, 0, 1)",
+                        borderWidth: 2
+                    }, {
+                        label: "Threshold (5 µg/m³)",
+                        data: new Array(chart_data.length).fill(5), // constant line
+                        borderColor: "blue",
+                        borderWidth: 2,
+                        borderDash: [10, 5], // dashed line
+                        pointRadius: 0, // no points
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            fetchData(my_x,my_y);
+            
+        }
+
+        // ask the python server on localhost to get the corresponding temporal data
+        // z = 6 means get the last 6 months
+        function fetchData(x, y) {
+            fetch("http://127.0.0.1:5000/get-data", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ x: x, y: y, z: 6 })
+            }) 
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error("Error:", data.error);
+                } else {
+                    window.greenAreaChart.data.datasets[0].data = data.values;
+                    window.greenAreaChart.update();
+                }
+            })
+            .catch(error => console.error("Fetch-Error:", error));
+        }
+
+    </script>
+</body>
+</html>

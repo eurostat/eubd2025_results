@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EU Quality of Life Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/gridviz"></script>
+    <script src="gridviz-parquet.js"></script> <!-- locale file -->
+</head>
+<body>
+    <div id="map" style="height: 500px; width: 800px; border: 1px solid black;"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // create Gridviz Map
+            const map = new gridviz.Map(document.getElementById("map"), {
+                x: 4090000,
+                y: 3150000,
+                z: 90
+            }).addZoomButtons();
+
+            // Check, if gridviz-parquet is loaded
+            if (typeof gviz_par === "undefined") {
+                console.error("❌ gviz_parquet is not available!");
+                return;
+            }
+
+
+            //define multi resolution dataset
+            const dataset = new gridviz.MultiResolutionDataset(
+                //the resolutions
+                [1000,5000, 10000, 20000, 50000, 100000],
+                //the function returning each dataset from the resolution
+                resolution => new gviz_par.ParquetGrid(map, "./data/2021_pop_" + Math.round(resolution / 1000) + "km_snappy.parquet", resolution)
+            )
+
+            //define color for each cell c
+            const colorFunction = (cell, resolution) => {
+                const density = 1000000 * cell.population / (resolution * resolution)
+                if (density > 1500) return "#993404"
+                else if (density > 600) return "#d95f0e"
+                else if (density > 200) return "#fe9929"
+                else if (density > 60) return "#fec44f"
+                else if (density > 15) return "#fee391"
+                else return "#ffffd4"
+            }
+
+            // define grid style
+            const style = new gridviz.ShapeColorSizeStyle(
+                { 
+                    color: colorFunction,
+                    alpha: (z) => (z < 70 ? 0.75 : 1.0),
+                    blendOperation: (z) => 'multiply' 
+                });
+
+            const backgroundLayer = new gridviz.BackgroundLayerWMS({
+                url: 'https://ows.terrestris.de/osm/service?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=OSM-WMS&STYLES=&FORMAT=image/jpeg&TRANSPARENT=false&SRS=EPSG:3035',
+            })
+
+
+            // add layer to the map
+            map.layers = [backgroundLayer,new gridviz.GridLayer(dataset, [style], {
+                    cellInfoHTML: (c) => {
+                        const population = c.population.toFixed(0);
+                        global_x = c.x;
+                        global_y = c.y;
+                        return `<b>${population}</b> inhabitants per km² `; 
+                    
+                    }
+                })
+            ];
+
+        });
+    </script>
+</body>
+</html>

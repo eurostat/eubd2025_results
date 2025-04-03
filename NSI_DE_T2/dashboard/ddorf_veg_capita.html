@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EU Quality of Life Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/gridviz"></script>
+    <script src="gridviz-parquet.js"></script> <!-- local file -->
+</head>
+<body>
+    <div id="map" style="height: 500px; width: 800px; border: 1px solid black;"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // Create GridViz map
+            const map = new gridviz.Map(document.getElementById("map"), {
+                x: 4090000,
+                y: 3150000,
+                z: 90
+            }).addZoomButtons().addFullscreenButton();
+
+            // Check if gridviz-parquet is loaded
+            if (typeof gviz_par === "undefined") {
+                console.error("❌ gviz_par is not available! Make sure 'gridviz-parquet.js' is present.");
+                return;
+            }
+
+            // Legacy code: actually, multi-resolution is not needed here
+            const dataset = new gridviz.MultiResolutionDataset(
+                // The resolutions
+                [1000],
+                // The function returning each dataset from the resolution
+                resolution => new gviz_par.ParquetGrid(map, "data/ddorf_veg_capita.parquet", resolution)
+            );
+
+            // Define color for each cell c
+            const colorFunction = (cell, resolution) => {
+                const density = cell.green_cap; // Value between 0 and 1
+
+                if (density === -2) return "#7D7D7D"; // Gray for missing values
+                
+                // High greenness values → Dark green
+                else if (density >= 0.9) return "#00441b";  // Very dark green
+                else if (density >= 0.5) return "#006d2c";  // Dark green
+                else if (density >= 0.1) return "#238b45";  // Rich green
+                else if (density >= 0.05) return "#41ab5d";  // Medium green
+                else if (density >= 0.01) return "#74c476";  // Light green
+                else if (density >= 0.005) return "#a1d99b";  // Very light green
+                else if (density >= 0.001) return "#c7e9c0";  // Yellowish green
+                
+                // Transition from green to yellow
+                else if (density >= 0.0005) return "#ffffcc";  // Yellowish
+                else if (density >= 0.0001) return "#fee08b";  // Light orange
+                
+                // Low values → Shades of red
+                else if (density >= 0.00005) return "#fc8d59"; // Orange-red
+                else return "#d73027"; // Dark red (very low values)
+            };                         
+
+            // Define grid style
+            const style = new gridviz.ShapeColorSizeStyle(
+                { 
+                    color: colorFunction,
+                    alpha: (z) => (z < 70 ? 0.7 : 1.0),
+                    blendOperation: (z) => 'multiply' 
+                });
+
+            const backgroundLayer = new gridviz.BackgroundLayerWMS({
+                url: 'https://ows.terrestris.de/osm/service?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=OSM-WMS&STYLES=&FORMAT=image/jpeg&TRANSPARENT=false&SRS=EPSG:3035',
+            });
+
+            // Add layers to the map
+            map.layers = [
+                backgroundLayer,
+                new gridviz.GridLayer(dataset, [style], {
+                    cellInfoHTML: (c) => {
+                        if (c.green_cap === -2) {
+                            return "<b>No population</b>"; // Alternative description
+                        } else {
+                            return `<b>${(c.green_cap).toFixed(6)}</b> km² green area per capita`; // Greenness value as a percentage
+                        }
+                    }
+                })
+            ];
+
+        });
+    </script>
+</body>
+</html>

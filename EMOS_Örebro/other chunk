@@ -1,0 +1,93 @@
+```{python}
+#| eval: false
+#| include: false
+with open("./Scripts/library_Authorization.py", encoding="utf-8") as f:
+    exec(f.read())
+```
+
+```{python}
+#| eval: false
+#| include: false
+# Function to fetch Sentinel-2 image
+def fetch_satellite_image(access_token):
+    """Fetch Sentinel-2 image from Copernicus API."""
+    url = "https://sh.dataspace.copernicus.eu/api/v1/process"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+    
+    data = {
+        "input": {
+            "bounds": {
+                "bbox": [17.60505, 59.199845, 18.442687, 59.592756]
+            },
+            "data": [
+                {
+                    "dataFilter": {
+                        "timeRange": {
+                            "from": "2025-01-07T00:00:00Z",
+                            "to": "2025-03-07T23:59:59Z"
+                        }
+                    },
+                    "type": "sentinel-2-l2a"
+                }
+            ]
+        },
+        "output": {
+            "width": 512,
+            "height": 469,
+            "responses": [{
+                "identifier": "default",
+                "format": {"type": "image/jpeg"}
+            }]
+        },
+        "evalscript": """//VERSION=3
+        function setup() {
+            return {
+                input: ["B04", "B08", "SCL", "dataMask"],
+                output: [{ id: "default", bands: 4 }]
+            };
+        }
+        function evaluatePixel(samples) {
+            let val = index(samples.B08, samples.B04);
+            return { default: [val, val, val, samples.dataMask] };
+        }"""
+    }
+    
+    response = requests.post(url, headers=headers, json=data)
+    if response.status_code == 200:
+        return Image.open(io.BytesIO(response.content))
+    else:
+        print(f"❌ API request failed! Status Code: {response.status_code}")
+        print(response.text)
+        return None
+```
+
+## Row {height="40%"}
+
+```{python}
+#| eval: false
+#| include: false
+#| title: Display Image
+# Function to display the image
+def display_image(image):
+    """Display the retrieved satellite image using Plotly."""
+    if image:
+        img_array = np.array(image)
+        fig = px.imshow(img_array)
+        fig.update_layout(coloraxis_showscale=True, margin=dict(l=0, r=0, t=0, b=0))
+        fig.show()
+    else:
+        print("❌ No image to display.")
+```
+
+```{python}
+#| eval: false
+#| include: false
+# Main execution
+access_token = get_access_token()
+if access_token:
+    image = fetch_satellite_image(access_token)
+    display_image(image)
+```

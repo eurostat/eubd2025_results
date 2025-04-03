@@ -1,0 +1,239 @@
+---
+format:
+  dashboard:
+    nav-buttons:
+      - icon: github
+        href: https://github.com/joseph-data/Team05
+    theme: lux
+---
+
+
+```{r install-python-libs, include=FALSE, message=FALSE, warning=FALSE, results='hide'}
+library(reticulate)
+py_install(
+  c("pillow", "numpy", "geopandas", "folium", "fiona", "matplotlib", "pandas", "plotly", "ipython"), 
+  pip = TRUE
+)
+```
+
+```{python , message=FALSE, warning=FALSE, include=FALSE, results = 'hide'}
+import io
+import numpy as np
+#import plotly.express as px
+#import plotly.graph_objects as go
+from PIL import Image
+
+import geopandas as gpd
+import folium
+import fiona
+
+from IPython.display import display
+
+import matplotlib.pyplot as plt
+
+import pandas as pd
+import plotly.express as px
+```
+
+## Row
+
+### Column {width="10%"}
+
+#### Row
+
+```{python}
+#| content: valuebox
+#| title: "NDVI Ratio"
+#| color: primary
+value = 0.6927 
+percentage = f"{value:.2%}"
+
+dict(
+  value = percentage
+)
+```
+
+#### Row
+
+```{python}
+#| content: valuebox
+#| title: "OTCI Ratio"
+#| color: primary
+value = 0.9699 
+percentage = f"{value:.2%}"
+
+dict(
+  value = percentage
+)
+```
+
+#### Row
+
+```{python}
+#| content: valuebox
+#| title: "Area impacted"
+#| color: primary
+value = 111.31
+formatted_value = f"{value:.2f} km²" 
+
+dict(
+  value = formatted_value
+)
+```
+#### Row
+
+```{python}
+#| content: valuebox
+#| title: "Fire start date"
+#| color: primary
+value = "12/08/2024"
+
+dict(
+  value = value
+)
+```
+
+### Column
+
+#### Row {height="80%"}
+
+```{python}
+
+#| warning: false
+#| messages: false
+
+# Read and prepare shapefile data
+local_shapefile_path = r"./data/nuts/NUTS_RG_20M_2024_3035.shp"
+gdf = gpd.read_file(local_shapefile_path).to_crs(epsg=4326)  # Convert to WGS84
+
+# Create base map centered on your custom polygon area
+m = folium.Map(location=[38.1, 23.9], zoom_start=11)  # Coordinates approximate to your polygon
+
+# Add original shapefile data (NUTS regions)
+folium.GeoJson(
+  gdf,
+  name="NUTS Regions",
+  style_function=lambda x: {'fillColor': 'none', 'color': 'grey', 'weight': 0.5}
+).add_to(m);
+
+# Add your custom polygon overlay
+custom_polygon = {"type":"Polygon","coordinates":[[[23.871574,38.07769],[23.859901,38.068095],[23.863335,38.059175],[23.861961,38.052822],[23.868313,38.052146],[23.878098,38.05458],[23.889599,38.059851],[23.89801,38.069717],[23.906422,38.069987],[23.915005,38.058094],[23.915176,38.051065],[23.924789,38.049037],[23.925476,38.039168],[23.938179,38.038763],[23.94556,38.042548],[23.947277,38.041196],[23.954659,38.045523],[23.954487,38.051065],[23.961353,38.060932],[23.952427,38.063095],[23.951225,38.07296],[23.958092,38.082419],[23.955517,38.085932],[23.964615,38.097146],[23.963242,38.108087],[23.958607,38.111734],[23.941441,38.124834],[23.946419,38.129426],[23.932858,38.136717],[23.931313,38.148328],[23.931484,38.160206],[23.95174,38.160746],[23.958778,38.167495],[23.963585,38.172488],[23.962727,38.181394],[23.95277,38.205544],[23.949165,38.221864],[23.940411,38.229416],[23.929081,38.227932],[23.922558,38.223212],[23.927021,38.233596],[23.931999,38.241281],[23.917408,38.242629],[23.905048,38.240742],[23.899384,38.231978],[23.896294,38.221999],[23.89801,38.211344],[23.890629,38.202846],[23.874149,38.182069],[23.891144,38.170869],[23.901443,38.173298],[23.902817,38.190704],[23.906593,38.188276],[23.908482,38.174512],[23.907623,38.16628],[23.901443,38.163041],[23.895607,38.148463],[23.899555,38.134422],[23.888912,38.117407],[23.888054,38.107952],[23.896809,38.096876],[23.888397,38.085122],[23.871574,38.07769]]]}
+
+folium.GeoJson(
+  custom_polygon,
+  name="Greece Focus Area",
+  style_function=lambda x: {
+    'fillColor': '#ff0000',  # Red fill
+    'color': '#ff0000',      # Red border
+    'weight': 2,
+    'fillOpacity': 0.3
+  },
+  tooltip="Greece Focus Areas"
+).add_to(m);
+
+# Add layer control and save
+folium.LayerControl().add_to(m);
+m
+```
+
+#### Row
+
+```{python}
+
+# Adjust display settings
+pd.set_option('display.max_columns', None)  # Show all columns
+pd.set_option('display.width', 1000)  # Increase display width
+pd.set_option('display.max_colwidth', None)  # Show full column content
+
+df = pd.read_csv("./data/TabDown.csv")  # Replace with your CSV file
+display(df)
+
+```
+
+### Column
+
+#### Column {.tabset}
+
+```{r}
+#| title: "NDVI plot"
+#| padding: 0px
+library(imager)
+
+# Load the image
+image_path <- "./photo/greece_ndvi.png"
+img <- load.image(image_path)
+
+# Set the plot margins
+par(mar = c(0, 0, 0, 0))
+
+# Display the image
+plot(img, axes = F)
+```
+
+```{r}
+#| title: "OTCI plot"
+library(imager)
+
+# Load the image
+image_path <- "./photo/greece_otci.png"
+img <- load.image(image_path)
+
+# Set the plot margins
+par(mar = c(0, 0, 0, 0))
+
+# Display the image
+plot(img, axes = F)
+```
+
+```{python}
+#| title: "NDVI graph"
+# Read the CSV file
+ndvi_data = pd.read_csv("./data/Greece_2024_NDVI.csv")
+
+# Convert 'C0/date' to a datetime and normalize the time to midnight
+ndvi_data['C0/date'] = pd.to_datetime(ndvi_data['C0/date']).dt.normalize()
+
+# Create an interactive line chart using Plotly Express
+fig = px.line(ndvi_data, x='C0/date', y='C0/mean', title='NDVI')
+
+# Update the layout for better aesthetics
+fig.update_layout(
+    title={'text': 'NDVI', 'x': 0.5, 'xanchor': 'center'},
+    xaxis_title='Date',
+    yaxis_title='NDVI',
+    xaxis=dict(tickformat='%Y-%m-%d'),
+    template='plotly_white',
+    margin=dict(l=50, r=50, t=60, b=50)
+)
+
+# Display the interactive plot
+fig.show();
+
+```
+
+```{python}
+#| title: "OTCI graph"
+# Read the CSV file
+otci_data = pd.read_csv("./data/Greece_2024_OTCI.csv")
+
+# Convert 'C0/date' to a datetime and normalize the time to midnight
+otci_data['C0/date'] = pd.to_datetime(otci_data['C0/date']).dt.normalize()
+
+# Create an interactive line chart with Plotly Express
+fig = px.line(otci_data, x='C0/date', y='C0/mean', title='OTCI')
+
+# Update the layout for better aesthetics
+fig.update_layout(
+    title={'text': 'OTCI', 'x': 0.5, 'xanchor': 'center'},
+    xaxis_title='Date',
+    yaxis_title='OTCI',
+    xaxis=dict(tickformat='%Y-%m-%d'),
+    template='plotly_white',
+    margin=dict(l=50, r=50, t=60, b=50)
+)
+
+# Display the interactive plot
+fig.show();
+
+
+```

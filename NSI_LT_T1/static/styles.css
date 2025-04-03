@@ -1,0 +1,107 @@
+/* Page layout styling */
+body {
+    background-color: #CFDDF3;
+    padding-left: 200px; /* Adjust padding to make space for the sidebar */
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Navigation bar styling */
+  .navbar {
+    background-color: #58608b;
+    width: 200px;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  h2 {
+    padding-top: 20px;
+  }
+  .nav-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+  }
+  
+  .nav-link {
+    color: white;
+    text-decoration: none;
+    margin: 10px 0;
+    padding: 10px 0; /* Adjust padding to make the hover effect less wide */
+    width: 80%; /* Adjust width to make the hover effect less wide */
+    text-align: center;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .nav-link:hover {
+    background-color: #008688;
+    color: #fff;
+    
+  }
+  th {
+    background-color: #58608b;
+    color: white !important;
+  }
+  
+  /* Footer text within navigation bar */
+  .nav-footer {
+    text-align: center;
+    font-size: 0.9em;
+    color: white;
+    padding: 10px 0;
+    background-color: #58608b;
+  }
+  
+  /* Form styling */
+  form {
+    margin-bottom: 20px;
+  }
+  
+  label {
+    font-weight: bold;
+  }
+  
+  input[type="text"] {
+    width: 60px;
+    padding: 5px;
+    margin-right: 10px;
+  }
+  
+  input[type="text"]#month {
+    width: 40px;
+  }
+  
+  /* Button styling */
+  .button {
+    background-color: #008688;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .button:hover {
+    background-color: #006f5f;
+  }
+  
+  /* Two-column layout */
+  .content {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 40px;
+  }
+  
+  .map-container {
+    flex: 1;
+    margin-right: 20px;
+  }
+  
+  .table-container {
+    flex: 1;
+  }
