@@ -1,3 +1,5 @@
+from calendar import monthrange
+
 import pandas as pd
 import os
 import zipfile
@@ -274,6 +276,14 @@ def extract_zip(zip_file_path, extract_to_path=None):
         return None
 
 
+def get_last_day_of_month(year, month):
+    year = int(year)
+    month = int(month)
+
+    last_day = monthrange(year, month)[1]
+    return f"{year}-{month:02}-{last_day:02}"
+
+
 def get_cams_data(years, months, dataset, pm2p5_threshold=25):
     if 'forecasts' in dataset:
         forecasts = True
@@ -295,9 +305,7 @@ def get_cams_data(years, months, dataset, pm2p5_threshold=25):
 
             if forecasts:
                 start_date = f"{year}-{month:02}-01"
-                end_year = int(year) + 1 if month == "12" else year
-                end_month = 1 if month == "12" else int(month) + 1
-                end_date = f"{end_year}-{end_month:02}-01"
+                end_date = get_last_day_of_month(year, month)
 
                 request.update({
                     "date": [f"{start_date}/{end_date}"],
