@@ -1,10 +1,9 @@
 from calendar import monthrange
-
 import pandas as pd
 import os
+
 import zipfile
 from dotenv import load_dotenv
-
 import geopandas as gpd
 import cdsapi
 import xarray as xr
@@ -125,7 +124,7 @@ def create_exceedance_shapefile(exceedance_data, lat, lon, shp_file):
                 else:
                     print(f"Error: Unexpected shape of exceedance_data: {exceedance_data.shape}")
                     w.close()  # Close the writer to avoid corrupt shapefiles
-                    return False
+                    return
 
                 latitude = lat[i]
                 longitude = lon[j] if lon[j] < 180 else lon[j] - 360  # Adjust longitude to be within -180 to 180 degrees
@@ -134,12 +133,10 @@ def create_exceedance_shapefile(exceedance_data, lat, lon, shp_file):
                 w.record(int(value), latitude, longitude)
 
         w.close()
-        print(f"Successfully created shapefile: {shp_file}")
-        return True
+        return
 
     except Exception as e:
         print(f"Error creating shapefile: {e}")
-        return False
 
 
 def summarize_shapefile(input_shapefile, output_csv, group_field, statistics_fields, statistics_types):
@@ -323,10 +320,11 @@ def get_cams_data(years, months, dataset, pm2p5_threshold=25):
                 })
 
             try:
-                result = client.retrieve(dataset, request)
                 zip_file = f"downloads/cams_data_{year}_{month}.zip"
                 os.makedirs('downloads', exist_ok=True)
-                result.download(zip_file)
+                if not os.path.exists(zip_file):
+                    result = client.retrieve(dataset, request)
+                    result.download(zip_file)
 
                 extraction_path = extract_zip(zip_file)
                 if extraction_path:
@@ -349,10 +347,7 @@ def get_cams_data(years, months, dataset, pm2p5_threshold=25):
                                         'latitude'].values
                                     lon = xr_dataset['lon'].values if 'lon' in xr_dataset else xr_dataset[
                                         'longitude'].values
-                                    if create_exceedance_shapefile(monthly_exceedance, lat, lon, shp_file):
-                                        print(f"Monthly exceedance shapefile successfully created at {shp_file}")
-                                    else:
-                                        print("Failed to create monthly exceedance shapefile.")
+                                    create_exceedance_shapefile(monthly_exceedance, lat, lon, shp_file)
                                 except Exception as e:
                                     print(f"Error creating monthly exceedance shapefile: {e}")
 
