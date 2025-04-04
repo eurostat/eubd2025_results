@@ -8,7 +8,7 @@
 
 # ##############################################################################
 # [A] PACKAGES
-pckgs <- c("data.table", "dplyr", "lubridate", "sf",  "giscoR", "eurostat", "leaflet", "shiny", "shinydashboard")
+pckgs <- c("data.table", "dplyr", "lubridate", "sf",  "giscoR", "eurostat", "leaflet", "shiny", "shinydashboard", "openxlsx", "tidyr")
 if( length(setdiff(pckgs, rownames(installed.packages()))) > 0 ){
   toinstall <- setdiff( pckgs, rownames(installed.packages()))
   cat(paste0("   --> Will be installing the following packages: '",paste(toinstall,collapse="' + '"),"'\n"))
@@ -37,11 +37,12 @@ rm(curr_path_split)
 
 
 if(curr_path_last4 == "eubd2025_results/NSI_CY/Hacks/R"){
-  cat("  GREAT, codes were found at the following folder path - can now run the process:\n  ",curr_path)
+  cat(paste0("  GREAT, codes were found at the following folder path - can now run the process:\n  ",curr_path,"\n"))
   
   hack_path <- paste0(dirname(curr_path),"/")
   home_path <- paste0(dirname(hack_path),"/")
   data_path <- paste0(hack_path,"Data/")            # Folder path to save created datasets
+  nutm_path <- paste0(data_path,"NUTS_Mapping2124/")# Folder path to manually save NUTS2021 to NUTS2024 mapping file
   mapr_path <- paste0(data_path,"MappingFiles_R/")  # Eurostat Files necessary for analysis 
   cdse_path <- paste0(data_path,"CDSE_Monthly/")    # CAMS Reanalysis (2013-2022) and Forecast (2023-2024) Data, downloaded and brought to MONTHLY, NUTS3 level in Python (showing number of dangerous days due to PM2.5) and saved as .CSV files
   live_path <- paste0(data_path,"CDSE_Monthly_R/")  # CAMS MONTHLY NUTS3 Dangerous Days data converted from .CSV to .RDS 

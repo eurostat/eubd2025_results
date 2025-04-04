@@ -4,8 +4,21 @@
 # [A] Download Eurostat data
 toc <- eurostat::get_eurostat_toc()  # table of contents
 
+#   (i) NUTS 2021 to NUTS 2024 - manually downloaded from: https://ec.europa.eu/eurostat/web/nuts
+#         Used NUTS 2021 codes in Python, so need to use this mapping file to translate NUTS 2024
+#         to NUTS 2021 codes in the Eurostat Population dataset "demo_r_pjanaggr3"
+nuts21to24_n1 <- as.data.table(openxlsx::read.xlsx(paste0(nutm_path,"NUTS2021-NUTS2024.xlsx"),sheet="Changes NUTS-1",cols=1:4))
+nuts21to24_n2 <- as.data.table(openxlsx::read.xlsx(paste0(nutm_path,"NUTS2021-NUTS2024.xlsx"),sheet="Changes NUTS-2",cols=1:4))
+nuts21to24_n3 <- as.data.table(openxlsx::read.xlsx(paste0(nutm_path,"NUTS2021-NUTS2024.xlsx"),sheet="Changes NUTS-3",cols=1:4))
+nuts21to24 <- rbindlist(c(list(nuts21to24_n1),list(nuts21to24_n2),list(nuts21to24_n3)))
+setnames(nuts21to24, c("Code.2021","Code.2024"), c("geo2021","geo"))
+nuts21to24[, geo2021 := tidyr::fill(.SD, 2, .direction = "down")$geo2021]
+nuts21to24 <- unique(nuts21to24[(!is.na(geo)) & (geo!=geo2021), .(geo, geo2021)])
+rm(nuts21to24_n1, nuts21to24_n2, nuts21to24_n3)
+gc()
 
-#   (i) Population in NUTS 3 by age groups - 1 JAN 2025 --> https://ec.europa.eu/eurostat/databrowser/view/demo_r_pjanaggr3/default/table?lang=en
+
+#   (ii) Population in NUTS 3 by age groups - 1 JAN 2025 --> https://ec.europa.eu/eurostat/databrowser/view/demo_r_pjanaggr3/default/table?lang=en
 popn_dname <- "demo_r_pjanaggr3"
 popn_info  <- toc[toc$code == popn_dname, ]
 popn_dt    <- eurostat::get_eurostat(popn_dname)
@@ -18,12 +31,20 @@ popn_dt <- left_join(popn_dt, popn_label, by="geo") %>%
   filter(age=="TOTAL", sex=="T")
 popn_dt <- as.data.table(popn_dt)
 popn_dt[is.na(geo_name), geo_name := geo]
+# ######################### CONVERT NUTS2024 REGIONS TO NUTS2021
+nc <- copy(names(popn_dt))
+popn_dt <- nuts21to24[popn_dt, on=c("geo")]
+popn_dt[!is.na(geo2021), geo:=geo2021]
+popn_dt[, geo2021:=NULL]
+popn_dt <- popn_dt[, .(population=sum(population,na.rm=T)), by=setdiff(names(popn_dt),"population")]
+popn_dt <- unique(popn_dt[, c(nc), with=F])
+# ##############################################################
 saveRDS(popn_dt, paste0(mapr_path,"Popn_NUTS3_ByAge.rds"))
-rm(popn_dname, popn_info, popn_label, popn_dt)
+rm(popn_dname, popn_info, popn_label, popn_dt, nc, nuts21to24)
 gc()
 
 
-#   (ii) Premature deaths due to exposure to fine particulate matter (PM2.5) --> https://ec.europa.eu/eurostat/databrowser/view/sdg_11_52/default/table?lang=en&category=sdg.sdg_03
+#   (iii) Premature deaths due to exposure to fine particulate matter (PM2.5) --> https://ec.europa.eu/eurostat/databrowser/view/sdg_11_52/default/table?lang=en&category=sdg.sdg_03
 pdeaths_dname <- "sdg_11_52"
 pdeaths_info  <- toc[toc$code == pdeaths_dname, ] 
 pdeaths_dt    <- eurostat::get_eurostat(pdeaths_dname) 
@@ -42,7 +63,7 @@ rm(pdeaths_dname, pdeaths_info, pdeaths_dt, pdeaths_dt_nr, pdeaths_dt_rt, pdeath
 gc()
 
 
-#   (iii) NUTS3 shapefiles
+#   (iv) NUTS3 shapefiles
 # nuts3_publication_years <- c("2003", "2006", "2010", "2013", "2016", "2021")
 nuts3_publication_years <- c("2021")  
 nuts3_list <- list()
@@ -57,15 +78,13 @@ for(y in 1:length(nuts3_publication_years)){
 nuts3_shapes <- do.call(bind_rows, nuts3_list)
 nuts3_shapes <- dplyr::mutate(nuts3_shapes, area_m2  = as.numeric(sf::st_area(geometry)))
 nuts3_shapes <- dplyr::mutate(nuts3_shapes, area_km2 = as.numeric(area_m2 / 1000000))
-# class(nuts3_shapes)
-# sf::st_write(nuts3_shapes, paste0(rdata_path,"NUTS3_Shapefile.gpkg"), delete_dsn = TRUE) # delete_dsn = TRUE overwrites the file.
-# sf::st_write(nuts3_shapes, paste0(rdata_path,"NUTS3_Shapefile.shp"), delete_dsn = TRUE) # delete_dsn = TRUE overwrites the file.
 saveRDS(nuts3_shapes, paste0(mapr_path,"NUTS3_Shapefile.rds"))
 rm(nuts3_list, nuts3_publication_years, nuts3_shapes)
 gc()
 
 
-#   (iv) Copernicus MONHTLY CAMS Data (ReAnalysis Data for Years 2013-2022 and Forecast Data for Years 2023-2024) 
+
+#   (v) Copernicus MONHTLY CAMS Data (ReAnalysis Data for Years 2013-2022 and Forecast Data for Years 2023-2024) 
 #         Downloaded using Python and show Dangerous Days (PM2.5 > 5) per NUTS3 region
 s_copern_yearly <- list()
 s_years <- 2012 + seq(12)
@@ -85,16 +104,6 @@ for(y in 1:length(s_years)){
     copern_inner <- read.csv(paste0(cdse_path,"summary_stats_",smyear_lbl,".csv"))
     copern_inner <- dplyr::mutate(copern_inner,TIME_PERIOD=as.Date(paste0(substr(smyear_lbl,1,4),"-",substr(smyear_lbl,6,7),"-01")))
     
-    # Correct Dangerous Days from Copernicus (EXCEED_mean) due to one extra day being included in the FORECAST data (first day of the next month)
-    tper <- unique(copern_inner$TIME_PERIOD)
-    if(lubridate::year(tper) > 2022){
-      factor <- lubridate::days_in_month(tper)[[1]]
-      copern_inner <- mutate(copern_inner, EXCEED_mean=(factor/(factor+1))*EXCEED_mean)
-      if(max(copern_inner$EXCEED_mean)>factor){
-        print(paste0("ERROR - Dataset: ",full_paths[f]))
-      }
-      rm(factor)
-    }
     copern_inner <- as.data.table(copern_inner)
     saveRDS(copern_inner, paste0(live_path,"NDDI_DDays_PMg5_",smyear_lbl,".rds"))
     smyear <- c(smyear, list(copern_inner))

@@ -44,6 +44,7 @@ for(f in 1:length(full_paths)){
   dtfile <- readRDS(full_paths[f])
   dtfile <- rename(dtfile,"geo"="NUTS_ID")
 
+  cat("TAROT MonthYear: ",myear,"\n")
   dtlist <- list()
   for(r in 0:3){
     copern_inn <- mutate(dtfile, LEVEL_AGGR=substr(geo, 1, 2+r))
